@@ -201,14 +201,13 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-
+    static NSString *simpleTableIdentifier = @"FDFeedCell";
     if (indexPath.section==0)
     {
-        customCell=(TableViewCell *)[tableview dequeueReusableCellWithIdentifier:@"cell"];
-        if (customCell==nil) {
+      //  customCell=(TableViewCell *)[tableview dequeueReusableCellWithIdentifier:@"cell"];
+//        if (customCell==nil) {
             customCell=[[TableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell"];
-        }
+//        }
         if (indexPath.row==0)
         {
             Statustextfield=[[UITextField alloc]initWithFrame:CGRectMake(0,5, self.view.frame.size.width,30)];
@@ -247,14 +246,13 @@
     {
         if (postdetailsarray) {
               postdic=nil;
-        static NSString *simpleTableIdentifier = @"FDFeedCell";
         customCell = (TableViewCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
-        if (customCell == nil)
-        {
-            NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"SimpleTableCell" owner:self options:nil];
-            customCell = [nib objectAtIndex:0];
-        }
-   
+//        if (customCell == nil)
+//        {
+//            NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"SimpleTableCell" owner:self options:nil];
+//            customCell = [nib objectAtIndex:0];
+//        }
+            postdic=[[NSMutableDictionary alloc]init];
         postdic=[postdetailsarray objectAtIndex:indexPath.section-1];
         
         NSString *first_name=[postdic valueForKey:@"first_name"];
@@ -284,10 +282,11 @@
                                             NSFontAttributeName:[UIFont fontWithName:@"Roboto-Bold" size:14]} range:range2];
             
 [customCell.profile_imageView sd_setImageWithURL:[NSURL URLWithString:[postdic valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"deafult_icon.png"]];
-            
-            
-    [customCell.post_imageView sd_setImageWithURL:[NSURL URLWithString:[postdic valueForKey:@"post_image"]] ];
-            if ([postdic valueForKey:@"post_doc"])
+            if([[postdic allKeys]containsObject:@"post_image"])
+            {
+    [customCell.post_imageView sd_setImageWithURL:[NSURL URLWithString:[postdic valueForKey:@"post_image"]] placeholderImage:[UIImage imageNamed:@"deafult_icon.png"]];
+            }
+           else if ([[postdic allKeys]containsObject:@"post_doc"])
             {
                 customCell.post_imageView.image=[UIImage imageNamed:@"pdf_image.png"];
                 UITapGestureRecognizer *tapAction = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(openDocument:)];
@@ -301,6 +300,11 @@
                 [customCell.post_imageView addGestureRecognizer:tapAction];
                 
             }
+            else
+            {
+                customCell.post_imageView.image=nil;
+            }
+         
             if ([postdic valueForKey:@"recently_liked"])
             {
                 NSString * likeThisString = @"likes this";
@@ -312,6 +316,11 @@
                 //                 UIFont *boldFont = [UIFont fontWithName:@"Roboto-Regular" size:12];
                 [attributedString setAttributes:@{NSForegroundColorAttributeName: [UIColor lightGrayColor]} range:Likerange];
                 customCell.recentLike_label.attributedText = attributedString;
+                
+            }
+            else
+            {
+                customCell.recentLike_label.attributedText=nil;
                 
             }
             [customCell.like addTarget:self action:@selector(like:) forControlEvents:UIControlEventTouchUpInside];
@@ -368,40 +377,14 @@
             NSLog(@"File Saved !");
       
         self.documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:url];
-        
-        // Configure Document Interaction Controller
         [self.documentInteractionController setDelegate:self];
-        
-        // Preview PDF
         [self.documentInteractionController presentPreviewAnimated:YES];
         [SVProgressHUD dismiss];
-//        self.documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:url];
-//        
-//        // Configure Document Interaction Controller
-//        [self.documentInteractionController setDelegate:self];
-//        
-//        // Present Open In Menu
-//        [self.documentInteractionController presentOpenInMenuFromRect:CGRectMake(0, 0, 350, 350) inView:self.view animated:YES];
+
     }
    }
 }
 
-//-(void)Opendox
-//{
-//    if(postdetailsarray)
-//    {
-//       
-//       // postdic=[postdetailsarray objectAtIndex:imageview.tag];
-//        UIWebView *view = [[UIWebView alloc] initWithFrame:CGRectMake(0,50, self.view.frame.size.width,self.view.frame.size.height-40)];
-////        NSString *url=[NSString stringWithFormat:@"https://docs.google.com/viewerng/viewer?url=%@",[postdic valueForKey:@"post_doc"]];
-//NSString *url=[NSString stringWithFormat:@"https://docs.google.com/viewerng/viewer?url=http://facilitymanagementcouncil.com/admin/uploads/postfiles/45.docx"];
-//        NSURL *nsurl=[NSURL URLWithString:url];
-//        NSURLRequest *nsrequest=[NSURLRequest requestWithURL:nsurl];
-//        [view loadRequest:nsrequest];
-//        [self.view addSubview:view];
-//        
-//    }
-//}
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ((indexPath.section!=0))
@@ -504,9 +487,12 @@ didCompleteWithError:(nullable NSError *)error
     [update setValue:@"1" forKey:@"already_liked"];
      i++;
         NSString *likes_count=[NSString stringWithFormat:@"%ld",i];
-    [update setValue:likes_count forKey:@"likes_count"];
-    [postdetailsarray replaceObjectAtIndex:Sectionpath withObject:update];
-    [tableview reloadSections:[NSIndexSet indexSetWithIndex:Sectionpath] withRowAnimation:UITableViewRowAnimationNone];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [update setValue:likes_count forKey:@"likes_count"];
+            [postdetailsarray replaceObjectAtIndex:Sectionpath withObject:update];
+        [tableview reloadSections:[NSIndexSet indexSetWithIndex:Sectionpath] withRowAnimation:UITableViewRowAnimationNone];
+        });
+  
      [self.view makeToast:[dic valueForKey:@"message"] duration:1.0 position:@"bottom"];
     }
 }

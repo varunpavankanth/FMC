@@ -37,7 +37,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [SVProgressHUD show];
-    user_id = @"26";
+    user_id = [[NSUserDefaults standardUserDefaults]stringForKey:@"user_id"];
     response_text = [[NSString alloc]init];
     //    [[NSUserDefaults standardUserDefaults]stringForKey:@"user_id"];
     NSURLSessionConfiguration *sessionConfig=[NSURLSessionConfiguration ephemeralSessionConfiguration];

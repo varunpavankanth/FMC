@@ -206,11 +206,27 @@
         }else{
             NSData *data = [[NSFileManager defaultManager] contentsAtPath:path];
             postDocumentData = data;
-            extensionType = [path pathExtension]; [path lastPathComponent];
+            extensionType = [path pathExtension];
+            [path lastPathComponent];
             documentName = [path lastPathComponent];
             base64string=[postDocumentData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+           if([extensionType isEqualToString:@"docx"]||[extensionType isEqualToString:@"pdf"])
+           {
             PostedfileView.hidden = NO;
             Postlabel.text = documentName;
+           }
+            else
+            {
+                UIAlertController *alertController;
+                alertController = [UIAlertController  alertControllerWithTitle:@"Warning"  message:@"Please select docx or pdf file only"  preferredStyle:UIAlertControllerStyleAlert];
+                [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                    [alertController dismissViewControllerAnimated:YES completion:nil];
+                    [self dismissViewControllerAnimated:YES completion:nil];
+                }]];
+                [self presentViewController:alertController animated:YES completion:nil];
+                [self deleteButtonClicked];
+            }
+                
         }
     }
 }
@@ -221,6 +237,8 @@
        NSURL *imageurl=info[UIImagePickerControllerReferenceURL];
          imageurl=info[UIImagePickerControllerReferenceURL];
          extensionType = [[imageurl pathExtension] lowercaseString];
+          PostedfileView.hidden = NO;
+         Postlabel.text=[NSString stringWithFormat:@"%@",imageurl];
          CFStringRef imageUTI = (UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,(__bridge CFStringRef)extensionType , NULL));
          NSLog(@"%@",imageUTI);
          if (UTTypeConformsTo(imageUTI, kUTTypeJPEG))
@@ -328,6 +346,8 @@
     NSArray *keys;
     NSString *poststring;
     NSString *extension;
+    NSString *userId=[[NSUserDefaults standardUserDefaults] valueForKey:@"user_id"];
+    NSLog(@"%@",userId);
     if(extensionType)
     {
         if([extensionType isEqualToString:@"png"]||[extensionType isEqualToString:@"jpg"])
@@ -335,19 +355,21 @@
             poststring=@"post_image";
             extension=@"image_extension";
         }
-        else
+        else if([extensionType isEqualToString:@"docx"]||[extensionType isEqualToString:@"pdf"])
         {
             poststring=@"post_doc";
             extension=@"doc_extension";
             
         }
-    objects = [NSArray arrayWithObjects:[[NSUserDefaults standardUserDefaults] valueForKey:@"user_id"] ,_textview.text,base64string,extensionType,nil];
+      
+        objects = [NSArray arrayWithObjects:[[NSUserDefaults standardUserDefaults] valueForKey:@"user_id"] ,_textview.text,base64string,extensionType,nil];
     keys = [NSArray arrayWithObjects:@"user_id",@"post_text",poststring,extension,nil];
     }
     else
     {
+        
         objects = [NSArray arrayWithObjects: [[NSUserDefaults standardUserDefaults] valueForKey:@"user_id"] ,_textview.text,nil];
-        keys = [NSArray arrayWithObjects:@"user_id" ,@"post_text",nil];
+        keys = [NSArray arrayWithObjects:@"user_id",@"post_text",nil];
     }
     NSDictionary *jsonDict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:jsonDict options:0 error:nil];
@@ -358,7 +380,8 @@
     [request setHTTPMethod:@"POST"];
     NSURLSessionDataTask *dataTask =[self.urlSession dataTaskWithRequest:request];
     dic=nil;
-    [dataTask resume];}
+    [dataTask resume];
+}
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
     didReceiveData:(NSData *)data1
@@ -386,6 +409,12 @@ didCompleteWithError:(nullable NSError *)error
 }
 -(void)sucesstask
 {
+    UIAlertController *alertController;
+    alertController = [UIAlertController  alertControllerWithTitle:@""  message:[dic valueForKey:@"message"]  preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self.navigationController popViewControllerAnimated:YES];
+    }]];
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 @end

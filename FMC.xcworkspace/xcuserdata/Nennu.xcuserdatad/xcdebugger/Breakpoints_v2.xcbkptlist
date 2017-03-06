@@ -25,13 +25,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "FMC/Events.m"
-            timestampString = "509953636.52042"
+            filePath = "FMC/EditViewController.m"
+            timestampString = "510318855.302973"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "73"
-            endingLineNumber = "73"
-            landmarkName = "-tableView:willDisplayCell:forRowAtIndexPath:"
+            startingLineNumber = "733"
+            endingLineNumber = "733"
+            landmarkName = "-URLSession:dataTask:didReceiveData:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -41,13 +41,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "FMC/MemberDir.m"
-            timestampString = "510133793.71155"
+            filePath = "FMC/EditViewController.m"
+            timestampString = "510318924.791507"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "202"
-            endingLineNumber = "202"
-            landmarkName = "-searchBar:textDidChange:"
+            startingLineNumber = "753"
+            endingLineNumber = "753"
+            landmarkName = "-sucesstask"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FMC/EditViewController.m"
+            timestampString = "510319027.688975"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "712"
+            endingLineNumber = "712"
+            landmarkName = "-Editdetails:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

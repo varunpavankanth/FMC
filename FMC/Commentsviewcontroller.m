@@ -278,8 +278,10 @@ didCompleteWithError:(nullable NSError *)error
     }
     -(void)commentedpost
     {
-        [self.view makeToast:[commentdic valueForKey:@"message"] duration:1.0 position:@"bottom"];
-        [self.navigationController popViewControllerAnimated:YES];
+        [self GetpostServercall];
+        textfield.text=nil;
+//        [self.view makeToast:[commentdic valueForKey:@"message"] duration:1.0 position:@"bottom"];
+//        [self.navigationController popViewControllerAnimated:YES];
     }
 
 

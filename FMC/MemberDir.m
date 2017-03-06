@@ -10,9 +10,9 @@
 #import "Reachability.h"
 #import "UIView+Toast.h"
 #import "SVProgressHUD.h"
-#import <QuartzCore/QuartzCore.h>
 #import "APIDataFetcher.h"
 #import "MembersDircell.h"
+#import "UIImageView+WebCache.h"
 @interface MemberDir ()
 {
     int pageNumber;
@@ -21,6 +21,7 @@
      NSArray *searchResults;
     UIImageView *imgv;
      NSMutableArray * resultArray;
+    NSArray * resultsArrayfromJSON;
 }
 
 @end
@@ -33,9 +34,14 @@
 
      [SVProgressHUD show];
         // Do any additional setup after loading the view.
-    searchBar=[[UISearchBar alloc]initWithFrame:CGRectMake(0, 64, CGRectGetWidth(self.view.frame), 44)];
-    [self.view addSubview:searchBar];
-   tv=[[UITableView alloc]initWithFrame:CGRectMake(0, 110, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame))];
+//    searchBar=[[UISearchBar alloc]initWithFrame:CGRectMake(0, 64, CGRectGetWidth(self.view.frame), 44)];
+//    [self.view addSubview:searchBar];
+    self.searchController=[[UISearchController alloc]initWithSearchResultsController:nil];
+    self.searchController.searchBar.delegate=self;
+    self.searchController.searchResultsUpdater=self;
+    self.searchController.dimsBackgroundDuringPresentation=NO;
+       tv=[[UITableView alloc]initWithFrame:CGRectMake(0,0, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame))];
+    tv.tableHeaderView=self.searchController.searchBar;
     tv.backgroundColor=[UIColor whiteColor];
     tv.separatorColor=[UIColor clearColor];
     tv.delegate=self;
@@ -70,12 +76,7 @@
          {
              if ([result isKindOfClass:[NSDictionary class]])
              {
-                 NSArray * resultsArrayfromJSON=(NSMutableArray*)[(NSDictionary*)result valueForKeyPath:@"member_details"];
-                 for (NSDictionary * resultDict in resultsArrayfromJSON)
-                 {
-                     MembersModel * track = [[MembersModel alloc] initWithDictionary:resultDict];
-                     [responseArray addObject:track];
-                 }
+                resultsArrayfromJSON=(NSMutableArray*)[(NSDictionary*)result valueForKeyPath:@"member_details"];
                  [tv reloadData];
                  [SVProgressHUD dismiss];
 
@@ -105,7 +106,14 @@
     return 10;
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-   return responseArray.count;
+    if (self.searchController.active == YES && ![self.searchController.searchBar.text isEqualToString:@""])
+    {
+        return resultArray.count;
+    }
+    else
+    {
+   return resultsArrayfromJSON.count;
+    }
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -123,93 +131,94 @@
      MembersDircell* cell=[tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (cell==nil) {
         cell=[[MembersDircell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell"];
+        
     }
   [cell.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    MembersModel * track = [responseArray objectAtIndex:indexPath.section];
     
-    if (track)
-    {
-//        cell.cellImageView.frame=CGRectMake(5 , 5, 50,50);
-//        cell.labelDescription.frame=  CGRectMake(CGRectGetMaxX(cell.cellImageView.frame)+5,5, cell.cellImageView.frame.size.width,  50);
-        [cell bindDataWithCell:track :indexPath :tableView];
-    }
+    if(resultsArrayfromJSON)
+       {
+            if (self.searchController.active == YES && ![self.searchController.searchBar.text isEqualToString:@""])
+                dic=[resultArray objectAtIndex:indexPath.section];
+           else
+              dic=[resultsArrayfromJSON objectAtIndex:indexPath.section];
+           
+           NSString *firstname=[dic valueForKey:@"first_name"];
+           NSString *Lastname=[dic valueForKey:@"last_name"];
+           NSString *companyname=[dic valueForKey:@"company_name"];
+           NSString *apd=[NSString stringWithFormat:@"%@ %@\n%@",[self stringWithSentenceCapitalization:firstname],[self stringWithSentenceCapitalization:Lastname],[self stringWithSentenceCapitalization:companyname]];
+           NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:apd attributes:nil];
+           cell.cellImageView=[[UIImageView alloc]initWithFrame:CGRectMake(5 ,8, 60,60)];
+           cell.cellImageView.layer.cornerRadius = 30.0f;
+           cell.cellImageView.clipsToBounds = YES;
+           cell.labelDescription=  [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(cell.cellImageView.frame)+5,5, cell.frame.size.width,  50)];
+           cell.labelDescription.attributedText = attributedText;
+           cell.labelDescription.numberOfLines=0;
+           // [self.labelDescription sizeToFit];
+           NSString *imageUrl = [dic valueForKey:@"profile_pic"];;
+           [cell.cellImageView sd_setImageWithURL:[NSURL URLWithString:imageUrl] placeholderImage:[UIImage imageNamed:@"deafult_icon.png"]];
+           [cell.contentView addSubview:cell.labelDescription];
+           [cell.contentView  addSubview:cell.cellImageView];
+       }
+    
+//    MembersModel * track;
+//  
+//    if (self.searchController.active == YES && ![self.searchController.searchBar.text isEqualToString:@""])
+//    {
+//    track = [resultArray objectAtIndex:indexPath.section];
+//    }
+//    else
+//    {
+//        track = [responseArray objectAtIndex:indexPath.section];
+//    }
+//    if (track)
+//    {
+//        [cell bindDataWithCell:track :indexPath :tableView];
+//    }
 
-//    dic=[responseArray objectAtIndex:indexPath.section];
-//    [cell.layer setCornerRadius:5.0f];
-//    [cell.layer setBorderColor:[[UIColor lightGrayColor]CGColor]];
-//    cell.layer.cornerRadius=7.0f;
-//    cell.layer.borderWidth=1.0f;
-//    cell.selectionStyle=UITableViewCellSelectionStyleNone;
-//   // cell.layer.backgroundColor=[UIColor grayColor].CGColor;
-//    
-//    imgv=[[UIImageView alloc]initWithFrame:CGRectMake(5 , 5, 50,50)];
-//    
-//    UILabel *lable=[[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(imgv.frame)+5,5, cell.frame.size.width,  50)];
-//    lable.numberOfLines=0;
-//   NSString *url =[dic valueForKey:@"profile_pic"] ;
-//    NSData *imageData=[NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
-//    
-//    UIImage *image = [UIImage imageWithData:imageData];
-//    imgv.image=image;
-//    imgv.layer.cornerRadius = 25.0f;
-//    imgv.clipsToBounds = YES;
-//    [cell.contentView addSubview:imgv];
-//    
-//
-//    [WebImageOperations processImageDataWithURLString:url andBlock:^(NSData *imageData) {
-//        if (self.view.window) {
-//                    }
-//        
-//    }];
-//        
-//    
-////        NSData *data = [NSData dataWithContentsOfURL:url];
-////        UIImage *image = [[UIImage alloc] initWithData:data];
-//    
-//    
-//    
-// 
-//    [cell.contentView addSubview:lable];
-    
-    
+
     
     return cell;
 }
-//- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
-//{
-//    
-//    [tableData removeAllObjects];
-//    
-//    if(searchText != nil && ![searchText isEqualToString:@""]){
-//        
-//        for(NSDictionary * book in dataSource){
-//            NSString * title = [book objectForKey:@"TITLE"];
-//            NSString * author = [book objectForKey:@"AUTHOR"];
-//            
-//            NSRange titleRange = [[title lowercaseString] rangeOfString:[searchText lowercaseString]];
-//            NSRange authorRange = [[author lowercaseString] rangeOfString:[searchText lowercaseString]];
-//            
-//            if(titleRange.location != NSNotFound || authorRange.location != NSNotFound)
-//                [tableData addObject:book];
-//        }
-//        
-//    }
-//    
-//    [tableView reloadData];
-//}
-- (void)searchBar:(UISearchBar *)SearchBar textDidChange:(NSString *)searchText
+-(NSString*)stringWithSentenceCapitalization:(NSString*)str
 {
-    [searchBar resignFirstResponder];
-    [tv reloadData];
-}
-- (void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope
-{
-    NSPredicate *resultPredicate = [NSPredicate
-                                    predicateWithFormat:@"SELF contains[cd] %@",
-                                    searchText];
     
-    searchResults = [responseArray filteredArrayUsingPredicate:resultPredicate];
+    // Get the first character in the string and capitalize it.
+    NSString *firstCapChar = [[str substringToIndex:1] capitalizedString];
+    
+    NSMutableString * temp = [str mutableCopy];
+    
+    // Replace the first character with the capitalized version.
+    [temp replaceCharactersInRange:NSMakeRange(0, 1) withString:firstCapChar];
+    
+    return temp ;
 }
+
+-(void)updateSearchResultsForSearchController:(UISearchController *)searchController
+{
+    NSLog(@"result array %@",resultArray);
+    NSPredicate * predicatefirst_name=[NSPredicate predicateWithFormat:@"first_name contains[cd] %@",searchController.searchBar.text];
+    NSPredicate *predicatelast_name=[NSPredicate predicateWithFormat:@"last_name contains[cd] %@",searchController.searchBar.text];
+    NSPredicate *predicatecompany_name=[NSPredicate predicateWithFormat:@"company_name contains[cd] %@",searchController.searchBar.text];
+    NSArray *subPredicates = [NSArray arrayWithObjects:predicatefirst_name,predicatelast_name,predicatecompany_name,nil];
+    NSPredicate *orPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:subPredicates];
+    resultArray = [NSMutableArray arrayWithArray:[resultsArrayfromJSON filteredArrayUsingPredicate:orPredicate]];
+//    NSString *searchString = searchController.searchBar.text;
+//    [self searchForText:searchString scope:searchController.searchBar.selectedScopeButtonIndex];
+    [self.tv reloadData];
+}
+//- (void)searchBar:(UISearchBar *)SearchBar textDidChange:(NSString *)searchText
+//{
+//    [searchBar resignFirstResponder];
+//    [tv reloadData];
+//}
+//- (void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope
+//{
+//    NSPredicate *resultPredicate = [NSPredicate
+//                                    predicateWithFormat:@"SELF contains[cd] %@",
+//                                    searchText];
+//    
+//    searchResults = [responseArray filteredArrayUsingPredicate:resultPredicate];
+//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
