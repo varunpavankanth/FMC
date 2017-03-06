@@ -480,6 +480,7 @@ didCompleteWithError:(nullable NSError *)error
 {
     if (postdetailsarray)
     {
+        NSLog(@"%ld",Sectionpath);
         
     postdic=[postdetailsarray objectAtIndex:Sectionpath];
     NSInteger i=[[postdic valueForKey:@"likes_count"] integerValue];
@@ -487,11 +488,11 @@ didCompleteWithError:(nullable NSError *)error
     [update setValue:@"1" forKey:@"already_liked"];
      i++;
         NSString *likes_count=[NSString stringWithFormat:@"%ld",i];
-        dispatch_async(dispatch_get_main_queue(), ^{
             [update setValue:likes_count forKey:@"likes_count"];
             [postdetailsarray replaceObjectAtIndex:Sectionpath withObject:update];
-        [tableview reloadSections:[NSIndexSet indexSetWithIndex:Sectionpath] withRowAnimation:UITableViewRowAnimationNone];
-        });
+       [tableview beginUpdates];
+        [tableview reloadSections:[[NSIndexSet alloc] initWithIndex:Sectionpath] withRowAnimation:UITableViewRowAnimationNone];
+        [tableview endUpdates];
   
      [self.view makeToast:[dic valueForKey:@"message"] duration:1.0 position:@"bottom"];
     }
