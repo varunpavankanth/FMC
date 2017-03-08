@@ -10,14 +10,16 @@
 #import "SWRevealViewController.h"
 #import "ACFloatingTextField.h"
 
-@interface ChangePassword : UIViewController<UITextFieldDelegate,NSURLSessionDelegate>
+@interface ChangePassword : UIViewController<UITextFieldDelegate,NSURLSessionDelegate,UIScrollViewDelegate>
 {
     ACFloatingTextField *userid,*userid1;
     UIButton * getpassword;
     NSMutableDictionary *dic;
     NSError *error1;
+    float y,h;
 }
 @property (nonatomic, strong) NSURLSession *urlSession;
+@property (nonatomic, strong) UIScrollView *scrollView;
 @end
 
 

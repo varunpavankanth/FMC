@@ -13,7 +13,8 @@
 #import "UIView+Toast.h"
 #import "APIDataFetcher.h"
 #import "UIImageView+WebCache.h"
-@interface Commentsviewcontroller ()<UITabBarDelegate,UITableViewDataSource>
+#import "SVProgressHUD.h"
+@interface Commentsviewcontroller ()<UITabBarDelegate,UITableViewDataSource,UIGestureRecognizerDelegate>
 {
     NSMutableArray *responseArray;
     NSMutableArray *comments;
@@ -25,6 +26,10 @@
 @synthesize CommentTableview;
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [SVProgressHUD setForegroundColor:[UIColor blueColor]];
+    [SVProgressHUD setBackgroundColor:[UIColor clearColor]];
+    [SVProgressHUD show];
+
     NSURLSessionConfiguration *sessionConfig=[NSURLSessionConfiguration defaultSessionConfiguration];
     self.urlSession= [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:[NSOperationQueue mainQueue]];
     CommentTableview.estimatedRowHeight=1000;
@@ -125,6 +130,11 @@
             customCell.Comment_lable.text=[NSString stringWithFormat:@"%lu Comments",(unsigned long)comments.count];
             
             [customCell.sharebutton addTarget:self action:@selector(onShareButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+            UITapGestureRecognizer *tapAction1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onShareButtonClicked:)];
+            tapAction1.numberOfTapsRequired = 1;
+            tapAction1.delegate =self;
+            customCell.ShareView.userInteractionEnabled = YES;
+            [customCell.ShareView addGestureRecognizer:tapAction1];
              [customCell.postImageView sd_setImageWithURL:[NSURL URLWithString:[self.dic objectForKey:@"profile_pic"]]];
             if ([self.dic valueForKey:@"post_doc"])
             {
@@ -206,7 +216,7 @@
                  postdic=[responseArray objectAtIndex:0];
                  comments=(NSMutableArray*)[(NSDictionary*)postdic valueForKeyPath:@"comments"];
                  [self.CommentTableview reloadData];
-                 //
+                 [SVProgressHUD dismiss];
              }
              
          }:^(NSError *error)
@@ -235,7 +245,8 @@
 -(void)commentPost
 {
 
-           
+    if(![textfield.text isEqualToString:@""])
+    {
             NSString * mystring =[NSString stringWithFormat:@"user_id=%@&post_id=%@&comment=%@",[[NSUserDefaults standardUserDefaults]valueForKey:@"user_id"],[postdic valueForKey:@"post_id"],textfield.text];
             NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
             [request setURL:[NSURL URLWithString:@"http://facilitymanagementcouncil.com/admin/service/postcomment"]];
@@ -246,6 +257,11 @@
             NSURLSessionDataTask *dataTask =[self.urlSession dataTaskWithRequest:request];
             commentdic=nil;
     [dataTask resume];
+    }
+    else
+    {
+          [self.view makeToast:@"empty comment can't be send" duration:1.0 position:@"bottom"];
+    }
   
     }
 - (void)onShareButtonClicked:(id)sender{
@@ -280,6 +296,9 @@ didCompleteWithError:(nullable NSError *)error
     {
         [self GetpostServercall];
         textfield.text=nil;
+        [textfield resignFirstResponder];
+        View.frame=CGRectMake(0, CGRectGetMaxY(self.view.frame)-50,CGRectGetMaxX(self.view.frame), 50);
+        [View setFrame: View.frame];
 //        [self.view makeToast:[commentdic valueForKey:@"message"] duration:1.0 position:@"bottom"];
 //        [self.navigationController popViewControllerAnimated:YES];
     }

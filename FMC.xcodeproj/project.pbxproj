@@ -52,10 +52,12 @@
 		7E5235441E65B6B3008092D8 /* CSRViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E5235421E65B6B3008092D8 /* CSRViewController.m */; };
 		7E54D2731E59CCA400B87CD5 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E54D2721E59CCA400B87CD5 /* Reachability.m */; };
 		7E54D27B1E59D5FB00B87CD5 /* UIView+Toast.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E54D27A1E59D5FB00B87CD5 /* UIView+Toast.m */; };
+		7E5521601E6D753F00F292BD /* CollectionReusableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E55215F1E6D753E00F292BD /* CollectionReusableView.m */; };
 		7E7369011E62BBA0000208BD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E7369001E62BBA0000208BD /* QuartzCore.framework */; };
 		7E7369081E62D7BA000208BD /* APIDataFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E7369071E62D7BA000208BD /* APIDataFetcher.m */; };
 		7E73690C1E62EB9F000208BD /* MembersDircell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E73690B1E62EB9F000208BD /* MembersDircell.m */; };
 		7E73690F1E62ED3D000208BD /* MembersModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E73690E1E62ED3D000208BD /* MembersModel.m */; };
+		7EA106C11E6D608B0032ECB1 /* icon87.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EA106C01E6D608B0032ECB1 /* icon87.png */; };
 		7EA6644C1E4A3C9C0004E255 /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EA6644B1E4A3C9C0004E255 /* splash.png */; };
 		7EA6644E1E4A3F5D0004E255 /* fmc_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EA6644D1E4A3F5D0004E255 /* fmc_logo.png */; };
 		7EB233A41E5D79FA000A1D60 /* Apache License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 7EB233971E5D79FA000A1D60 /* Apache License.txt */; };
@@ -84,6 +86,7 @@
 		7EF401E11E5CBFDA0081EC81 /* CommentsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EF401E01E5CBFDA0081EC81 /* CommentsCell.m */; };
 		7EF401E41E5CC0010081EC81 /* PostsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EF401E31E5CC0010081EC81 /* PostsCell.m */; };
 		7EF401E71E5CC0D30081EC81 /* Commentsviewcontroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EF401E61E5CC0D30081EC81 /* Commentsviewcontroller.m */; };
+		7EFFADAC1E6EAC830071C6E9 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EFFADAB1E6EAC830071C6E9 /* background.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -159,6 +162,8 @@
 		7E54D27A1E59D5FB00B87CD5 /* UIView+Toast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Toast.m"; sourceTree = "<group>"; };
 		7E54D27D1E5A229200B87CD5 /* SVProgressHUD.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = SVProgressHUD.bundle; path = Pods/SVProgressHUD/SVProgressHUD/SVProgressHUD.bundle; sourceTree = "<group>"; };
 		7E54D27F1E5A23CF00B87CD5 /* libSVProgressHUD.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSVProgressHUD.a; path = "Pods/../build/Debug-iphoneos/SVProgressHUD/libSVProgressHUD.a"; sourceTree = "<group>"; };
+		7E55215E1E6D753E00F292BD /* CollectionReusableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CollectionReusableView.h; path = ../CollectionReusableView.h; sourceTree = "<group>"; };
+		7E55215F1E6D753E00F292BD /* CollectionReusableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CollectionReusableView.m; path = ../CollectionReusableView.m; sourceTree = "<group>"; };
 		7E7369001E62BBA0000208BD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		7E7369061E62D7B9000208BD /* APIDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = APIDataFetcher.h; path = FMC/API/APIDataFetcher.h; sourceTree = "<group>"; };
 		7E7369071E62D7BA000208BD /* APIDataFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = APIDataFetcher.m; path = FMC/API/APIDataFetcher.m; sourceTree = "<group>"; };
@@ -166,6 +171,7 @@
 		7E73690B1E62EB9F000208BD /* MembersDircell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MembersDircell.m; path = FMC/MembersDircell.m; sourceTree = "<group>"; };
 		7E73690D1E62ED3D000208BD /* MembersModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MembersModel.h; path = FMC/MembersModel.h; sourceTree = "<group>"; };
 		7E73690E1E62ED3D000208BD /* MembersModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MembersModel.m; path = FMC/MembersModel.m; sourceTree = "<group>"; };
+		7EA106C01E6D608B0032ECB1 /* icon87.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon87.png; sourceTree = "<group>"; };
 		7EA6644B1E4A3C9C0004E255 /* splash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splash.png; sourceTree = "<group>"; };
 		7EA6644D1E4A3F5D0004E255 /* fmc_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fmc_logo.png; sourceTree = "<group>"; };
 		7EB233971E5D79FA000A1D60 /* Apache License.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "Apache License.txt"; path = "FMC/roboto-2/Apache License.txt"; sourceTree = SOURCE_ROOT; };
@@ -203,6 +209,7 @@
 		7EF401E31E5CC0010081EC81 /* PostsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostsCell.m; sourceTree = "<group>"; };
 		7EF401E51E5CC0D30081EC81 /* Commentsviewcontroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Commentsviewcontroller.h; sourceTree = "<group>"; };
 		7EF401E61E5CC0D30081EC81 /* Commentsviewcontroller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Commentsviewcontroller.m; sourceTree = "<group>"; };
+		7EFFADAB1E6EAC830071C6E9 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
 		DE4A6BF08FE79BE9FFBC5B6C /* libPods-FMC.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FMC.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE09A918301FCE5069BAAA2A /* Pods-FMC.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FMC.release.xcconfig"; path = "Pods/Target Support Files/Pods-FMC/Pods-FMC.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -324,6 +331,8 @@
 				7EB233B11E5DEA0B000A1D60 /* FMC.entitlements */,
 				7E3885651E4C2D0600BA467A /* SWRevealViewController */,
 				7E54D2711E59CCA400B87CD5 /* Reachability.h */,
+				7E55215E1E6D753E00F292BD /* CollectionReusableView.h */,
+				7E55215F1E6D753E00F292BD /* CollectionReusableView.m */,
 				7E54D2721E59CCA400B87CD5 /* Reachability.m */,
 				7E54D2791E59D5FA00B87CD5 /* UIView+Toast.h */,
 				7E54D27A1E59D5FB00B87CD5 /* UIView+Toast.m */,
@@ -395,12 +404,14 @@
 			isa = PBXGroup;
 			children = (
 				7ECAC5B11E66FAB8001D6C3B /* icon_delete.png */,
+				7EFFADAB1E6EAC830071C6E9 /* background.png */,
 				7E52353D1E657417008092D8 /* pdf_image.png */,
 				44CD79CA1E5700C8009C914F /* home_post.png */,
 				44DE68751E55A579008A2EB6 /* 13.jpeg */,
 				44FB31D61E5469500037A69D /* icon180.png */,
 				44FB31D71E5469500037A69D /* icon152.png */,
 				44FB31CA1E5469490037A69D /* icon120.png */,
+				7EA106C01E6D608B0032ECB1 /* icon87.png */,
 				44FB31CB1E5469490037A69D /* icon80.png */,
 				44FB31CC1E5469490037A69D /* icon76.png */,
 				44FB31CD1E5469490037A69D /* icon58.png */,
@@ -517,11 +528,13 @@
 				7EC61F921E49984D0092F715 /* Main.storyboard in Resources */,
 				7EB233AC1E5D79FA000A1D60 /* Roboto-Medium.ttf in Resources */,
 				7EB233A71E5D79FA000A1D60 /* Roboto-Bold.ttf in Resources */,
+				7EFFADAC1E6EAC830071C6E9 /* background.png in Resources */,
 				7EA6644C1E4A3C9C0004E255 /* splash.png in Resources */,
 				44DE68761E55A579008A2EB6 /* 13.jpeg in Resources */,
 				7EB233AF1E5D79FA000A1D60 /* Roboto-Thin.ttf in Resources */,
 				7E08E31F1E4AFF250009ACC4 /* login_background.png in Resources */,
 				44FB31C91E541FA80037A69D /* 2.jpeg in Resources */,
+				7EA106C11E6D608B0032ECB1 /* icon87.png in Resources */,
 				44FB31D21E5469490037A69D /* icon76.png in Resources */,
 				7EB233A51E5D79FA000A1D60 /* Roboto-Black.ttf in Resources */,
 				7EB233AB1E5D79FA000A1D60 /* Roboto-LightItalic.ttf in Resources */,
@@ -613,6 +626,7 @@
 				7E3295971E642E3C0001D8AC /* photoZoom.m in Sources */,
 				7E2D58891E4D76C900BDE1A8 /* Edtorials.m in Sources */,
 				7E2D58801E4D762F00BDE1A8 /* Awards.m in Sources */,
+				7E5521601E6D753F00F292BD /* CollectionReusableView.m in Sources */,
 				44CD79C61E570053009C914F /* shareViewController.m in Sources */,
 				7EC61F891E49984D0092F715 /* main.m in Sources */,
 				44FB31C51E541B7B0037A69D /* GalleryCollectionViewController.m in Sources */,
@@ -747,6 +761,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.versatilemobitech.FMCouncil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -765,6 +781,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.versatilemobitech.FMCouncil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

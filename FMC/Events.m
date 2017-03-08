@@ -44,7 +44,8 @@
     self.urlSession= [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:nil];
     selected=NO;
     
-    self.view.backgroundColor=[UIColor whiteColor];
+    //self.view.backgroundColor=[UIColor whiteColor];
+    self.view.backgroundColor=[UIColor colorWithRed:0.96 green:0.96 blue:0.96 alpha:1];
     self.navigationItem.title=@"Events";
     self.navigationController.navigationBar.tintColor=[UIColor whiteColor];
     self.navigationController.navigationBar.barTintColor=[UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
@@ -252,8 +253,8 @@ didCompleteWithError:(nullable NSError *)error
 }
 -(void)sucesstask
 {
-    NSLog(@"responseData%@",dict);
-    
+   // NSLog(@"responseData%@",dict);
+    [tv reloadData];
   }
 
 
@@ -339,7 +340,7 @@ didCompleteWithError:(nullable NSError *)error
     UIImage *aboutbtn = [UIImage imageNamed:@"downarrow.png"];
     [arrow setImage:aboutbtn forState:UIControlStateNormal];
     [arrow setBackgroundColor:[UIColor clearColor]];
-    [cell1.contentView addSubview:arrow];
+   
     PieProgressBarView=[[UIView alloc]initWithFrame:CGRectMake(CGRectGetMaxX(arrow. frame)+10,40,70,70)];
     PieProgressBarView.backgroundColor =[UIColor whiteColor];
      [cell1.contentView addSubview:PieProgressBarView];
@@ -408,10 +409,11 @@ didCompleteWithError:(nullable NSError *)error
         
         CGRect frame=cell1.contentView.frame;
         frame.size.height=CGRectGetMaxY(detailsLabel.frame)+10;
+         [arrow setImage:[UIImage imageNamed:@"uparrow"] forState:UIControlStateNormal];
         [cell1.contentView setFrame:frame];
 
     }
-    NSLog(@"My view frame: %@", NSStringFromCGRect(cell1.contentView.frame));
+     [cell1.contentView addSubview:arrow];
     return cell1;
 }
 

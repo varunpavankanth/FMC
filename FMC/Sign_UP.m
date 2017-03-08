@@ -26,13 +26,13 @@
  
     self.view.backgroundColor=[UIColor whiteColor];
     self.navigationController.navigationBar.barTintColor=[UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
-//    UINavigationBar *navbar = [[UINavigationBar alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
-//    navbar.barTintColor=[UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
+     self.navigationController.navigationBar.tintColor=[UIColor whiteColor];
     self.title=@"Sign Up";
-   UIButton *back=[[UIButton alloc]initWithFrame:CGRectMake(0, 10,30,20)];
+     [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
+   UIButton *back=[[UIButton alloc]initWithFrame:CGRectMake(5, 10,20,20)];
     //[back setTitle:@"<-Back" forState:UIControlStateNormal];
  [back setBackgroundImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
-    self.navigationController.navigationBar.tintColor=[UIColor whiteColor];
+   
     [back addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
     //[self.view addSubview:navbar];
     [self.navigationController.navigationBar addSubview:back];
@@ -93,6 +93,7 @@
     bussinessE_id.selectedLineColor = [UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
     bussinessE_id.placeHolderColor = [UIColor grayColor];
     bussinessE_id.delegate=self;
+    bussinessE_id.keyboardType=UIKeyboardTypeEmailAddress;
     bussinessE_id.tag=4;
     bussinessE_id.selectedPlaceHolderColor = [UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
     bussinessE_id.lineColor = [UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
@@ -106,6 +107,7 @@
     personalE_id.selectedLineColor = [UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
     personalE_id.placeHolderColor = [UIColor grayColor];
     personalE_id.delegate=self;
+    personalE_id.keyboardType=UIKeyboardTypeEmailAddress;
     personalE_id.tag=5;
     personalE_id.selectedPlaceHolderColor = [UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
     personalE_id.lineColor = [UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
@@ -436,7 +438,7 @@
     }else{
         imagePicker = [[UIImagePickerController alloc]init];
         imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-        
+         imagePicker.delegate=self;
         [imagePicker setAllowsEditing:YES];
         [self presentViewController:imagePicker animated:YES completion:nil];
     }
@@ -484,10 +486,10 @@
 }
 
 
-- (BOOL)prefersStatusBarHidden
-{
-    return YES;
-}
+//- (BOOL)prefersStatusBarHidden
+//{
+//    return YES;
+//}
 -(void)frames
 {
     firastname.frame=CGRectMake(10,0 ,self.view.frame.size.width-20 ,50 );
@@ -515,6 +517,48 @@
     
 }
 
+//- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+//    if ([contactno.text length] > 10) {
+//        contactno.text = [contactno.text substringToIndex:10-1];
+//        return NO;
+//    }
+//    return YES;
+//}
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    int limit = 9;
+    if(textField==contactno)
+    {
+        return !([contactno.text length]>limit && [string length] > range.length);
+    }
+    else if(textField==alterno)
+    {
+        return !([alterno.text length]>limit && [string length] > range.length);
+    }
+    return YES;
+    
+}
+//- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+//{
+//    if(contactno)
+//    {
+//    int length = (int )[textField.text length] ;
+//    if (length >= 10 && ![string isEqualToString:@""]) {
+//        contactno.text = [contactno.text substringToIndex:10];
+//      //  alterno.text = [alterno.text substringToIndex:10];
+//        return NO;
+//    }
+//    }
+//   else if(alterno)
+//    {
+//    int length1 = (int )[alterno.text length] ;
+//    if (length1 >= 10 && ![string isEqualToString:@""]) {
+//        alterno.text = [contactno.text substringToIndex:10];
+//        return NO;
+//    }
+//    }
+//    return YES;
+//}
 - (BOOL)validatePhone:(NSString*)phone
 {
     NSString *str1=@"^[2-9][0-9]{9}$";
@@ -654,6 +698,15 @@
             [self presentViewController:alertController animated:YES completion:nil];
             
         }
+        else if ([currenloc.text isEqualToString:@""])
+        {
+            alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please enter current location"  preferredStyle:UIAlertControllerStyleAlert];
+            [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                [alertController dismissViewControllerAnimated:YES completion:nil];
+            }]];
+            [self presentViewController:alertController animated:YES completion:nil];
+        }
+
         else if(![self validatePhone:contactno.text])
         {
             UIAlertController *alertController;
@@ -703,7 +756,7 @@
         else if(![chkBtn isSelected]&![chkBtn1 isSelected]&![chkBtn2 isSelected]&![chkBtn3 isSelected])
         {
             UIAlertController *alertController;
-            alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please Choose plase"  preferredStyle:UIAlertControllerStyleAlert];
+            alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please Select any location"  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
             }]];
@@ -822,9 +875,36 @@ didCompleteWithError:(nullable NSError *)error
 }
 
 
-- (void)chkBtnHandler:(id)sender {
-    // If checked, uncheck and visa versa
-    [(UIButton *)sender setSelected:![(UIButton *)sender isSelected]];
+- (void)chkBtnHandler:(UIButton *)sender {
+    if(sender.tag==1)
+    {
+        [chkBtn setSelected:YES];
+        [chkBtn1 setSelected:NO];
+        [chkBtn2 setSelected:NO];
+        [chkBtn3 setSelected:NO];
+    }
+    else if(sender.tag==2){
+        [chkBtn setSelected:NO];
+        [chkBtn1 setSelected:YES];
+        [chkBtn2 setSelected:NO];
+        [chkBtn3 setSelected:NO];
+        
+    }
+    else if(sender.tag==3){
+        [chkBtn setSelected:NO];
+        [chkBtn1 setSelected:NO];
+        [chkBtn2 setSelected:YES];
+        [chkBtn3 setSelected:NO];
+        
+    }
+    else
+    {
+        [chkBtn setSelected:NO];
+        [chkBtn1 setSelected:NO];
+        [chkBtn2 setSelected:NO];
+        [chkBtn3 setSelected:YES];
+    }
+
 }
 
 - (void)didReceiveMemoryWarning {

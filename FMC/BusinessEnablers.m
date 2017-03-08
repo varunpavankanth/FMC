@@ -11,47 +11,42 @@
 #import "UIView+Toast.h"
 #import "APIDataFetcher.h"
 #import "UIImageView+WebCache.h"
+#import "CollectionReusableView.h"
+#import "SVProgressHUD.h"
 
 
-@interface BusinessEnablers ()<UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout>
+@interface BusinessEnablers ()
 {
     int pageNumber;
     NSMutableArray *responseArray;
     NSMutableDictionary *dic;
     NSMutableDictionary *subdic;
+    NSMutableDictionary *postdic;
+    NSUInteger myCount;
+    int lastpage;
+
 }
 
 @property(nonatomic,retain)UICollectionView*collectionView;
-
-@property(nonatomic,retain)NSArray*imagesNameArray;
-@property(nonatomic,retain)NSArray*titleArray;
-
-
-
 @end
 
 @implementation BusinessEnablers
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+      [SVProgressHUD setBackgroundColor:[UIColor clearColor]];
+    [SVProgressHUD show];
     self.view.backgroundColor=[UIColor whiteColor];
     self.navigationItem.title=@"Business Enablers";
     self.navigationController.navigationBar.tintColor=[UIColor whiteColor];
     self.navigationController.navigationBar.barTintColor=[UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
-  
-    // Do any additional setup after loading the view.
-    _imagesNameArray=@[@"1.jpeg",@"2.jpeg",@"1.jpeg",@"2.jpeg",@"2.jpeg",@"2.jpeg"];
-    
-      pageNumber=1;
-    _titleArray=@[@"pn3",@"pn2",];
-    
-    
-    
+  pageNumber=1;
+    self.view.backgroundColor=[UIColor colorWithRed:0.96 green:0.96 blue:0.96 alpha:1];
     
     UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
     flowLayout.minimumInteritemSpacing = 10;
     flowLayout.minimumLineSpacing = 10;
+    flowLayout.headerReferenceSize = CGSizeMake(0, 20);
     flowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
     
     
@@ -60,9 +55,7 @@
     frame.size.width -= 2*padding;
     frame.size.height -= 2*padding;
     frame.origin.y = padding;
-    
     _collectionView = [[UICollectionView alloc] initWithFrame:frame collectionViewLayout:flowLayout];
-    
     _collectionView.dataSource = self;
     _collectionView.delegate = self;
     _collectionView.showsVerticalScrollIndicator = YES;
@@ -74,15 +67,8 @@
     [_collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headerViewId"];
     [self.view addSubview:_collectionView];
     [self BusinessEnablersServercall];
-  
-    
-    
 }
 
-
-
-
-// Do any additional setup after loading the view, typically from a nib.
 
 
 
@@ -121,17 +107,14 @@
         dic=[responseArray objectAtIndex:indexPath.section];
         
       NSMutableArray *arr   =(NSMutableArray*)[(NSDictionary*)dic valueForKeyPath:@"partners"];
-//        for (int i=0; i<arr.count; i++) {
-     
-        subdic=[arr objectAtIndex:indexPath.row];
+         subdic=[arr objectAtIndex:indexPath.row];
     CGFloat width = 150;
     CGFloat height1=150;
+        //(CGRectGetWidth(cell.frame)-width)/2
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake((CGRectGetWidth(cell.frame)-width)/2, 15, width, height1)];
-        
-   // imageView.image = [UIImage imageNamed:[subdic valueForKey:@"partner_logo"]];
-      //  NSURL *url=[NSURL URLWithString:subdic[@"partner_logo"]] ;
         [imageView sd_setImageWithURL:[NSURL URLWithString:[subdic objectForKey:@"partner_logo"]] placeholderImage:[UIImage imageNamed:@"deafult_icon.png"]];
-     imageView.layer.cornerRadius = 75.0f;
+     imageView.layer.cornerRadius = width/2;
+        imageView.backgroundColor=[UIColor blueColor];
     [cell.contentView addSubview:imageView];
     CGFloat height = 30;
     UIButton *button = [UIButton  buttonWithType:UIButtonTypeSystem];
@@ -143,13 +126,40 @@
     button.titleLabel.numberOfLines=0;
     [button setTintColor:[UIColor whiteColor]];
     [cell.contentView addSubview:button];
-//        }
     }
     
     return cell;
 }
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+{
+    if ([kind isEqualToString:UICollectionElementKindSectionHeader]){
+        UICollectionReusableView *headerView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headerViewId" forIndexPath:indexPath];
+        if(responseArray)
+        {
+            dic=[responseArray objectAtIndex:indexPath.section];
+        UILabel *lable = [[UILabel alloc] init];
+        lable.text=[dic valueForKey:@"category_name"];
+        CGFloat width = 80;
+        CGFloat height=20;
+        
+        lable.frame = CGRectMake(10,0, width, height);
+//        imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        [headerView addSubview:lable];
+        
+  //      CGFloat leftPadding  = 20;
+//        UIImageView *nameimage = [[UIImageView alloc] initWithFrame:CGRectMake(leftPadding, CGRectGetMaxY(imageView.frame), self.view.frame.size.width - 2*leftPadding, 40)];
+//        nameimage.image=[UIImage imageNamed:@"profilelabel"];
+//        [headerView addSubview:nameimage];
+        }
+        
+        return headerView;
+    }
+    return nil;
+}
+
+
 - (UIEdgeInsets)collectionView:(UICollectionView*)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    return UIEdgeInsetsMake(50, 50, 30, 30); // top, left, bottom, right
+    return UIEdgeInsetsMake(0, 20, 30, 30); // top, left, bottom, right
 }
 
 
@@ -177,6 +187,27 @@
     
     return temp ;
 }
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([postdic objectForKey:@"knowledge_partner_details"])
+    {
+        if (!lastpage)
+        {
+            if (indexPath.row ==  responseArray.count-4) {
+                NSLog(@"load more");
+                pageNumber++;
+                NSLog(@"page no:%d",pageNumber);
+                [self BusinessEnablersServercall];
+            }
+        }
+        else if(indexPath.section==myCount )
+        {
+            [self.view makeToast:@"No more data" duration:1.0 position:@"bottom"];
+            
+        }
+    }
+}
+
 
 /*SERVER CALL*/
 -(void)BusinessEnablersServercall
@@ -194,15 +225,29 @@
         NSString *URL =[NSString stringWithFormat:@"http://facilitymanagementcouncil.com/admin/service/knowledgepartners/%d",pageNumber];
         
         [APIDataFetcher loadDataFromAPIUsingSession:URL :^(id result)
-         {
+         {//knowledge_partner_details
              
              if ([result isKindOfClass:[NSDictionary class]])
              {
-                 responseArray=(NSMutableArray*)[(NSDictionary*)result valueForKeyPath:@"knowledge_partner_details"];
-                 
-                 [self.collectionView reloadData];
+                 if([result objectForKey:@"knowledge_partner_details"])
+                 {
+                     postdic=result;
+                     [self sucesstask];
+                     
+                 }
+                 else
+                 {
+                     NSLog(@"nolonger data present ");
+                     NSLog(@"last page no:%d",pageNumber);
+                     lastpage=pageNumber;
+                     pageNumber=1;
+                     myCount = [responseArray count];
+                 }
              }
-             
+             else{
+                 NSLog(@"data got nil");
+             }
+         
          }:^(NSError *error)
          
          {
@@ -216,5 +261,21 @@
         
     }
 }
-
+-(void)sucesstask
+{
+    if(!responseArray)
+    {
+        responseArray=[[postdic objectForKey:@"knowledge_partner_details"] mutableCopy];
+    }
+    else{
+        if ([postdic objectForKey:@"knowledge_partner_details"]) {
+            
+            NSMutableArray *arry=[[NSMutableArray alloc]init];
+            arry=[[postdic objectForKey:@"knowledge_partner_details"] mutableCopy];
+            [(NSMutableArray *)responseArray addObjectsFromArray:arry]  ;
+        }
+    }
+    [_collectionView reloadData];
+    [SVProgressHUD dismiss];
+}
 @end

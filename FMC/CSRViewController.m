@@ -12,13 +12,17 @@
 #import "APIDataFetcher.h"
 #import "UIImageView+WebCache.h"
 #import "CSRcellViewController.h"
+#import "SVProgressHUD.h"
 #define padding 5
 
 @interface CSRViewController ()<UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout>
 {
     int pageNumber;
+    NSUInteger myCount;
+    int lastpage;
     NSDictionary *dic;
     NSMutableArray *responseArray;
+    NSMutableDictionary *postdic;;
 }
 
 
@@ -34,6 +38,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     pageNumber =1;
+    [SVProgressHUD show];
     [self PhotoAlbamServercall];
     self.view.backgroundColor=[UIColor whiteColor];
     self.navigationItem.title=@"CSR";
@@ -176,15 +181,27 @@
              
              if ([result isKindOfClass:[NSDictionary class]])
              {
-                 responseArray=(NSMutableArray*)[(NSDictionary*)result valueForKeyPath:@"csr_category"];
-                 ////                 for (NSDictionary * resultDict in resultsArrayfromJSON)
-                 ////                 {
-                 ////                     responseArray [resultDict ]
-                 //                 }
-                 [_collectionView reloadData];
-                 //
+                 //csr_category
+                 if([result objectForKey:@"csr_category"])
+                 {
+                     postdic=result;
+                     [self sucesstask];
+                     
+                 }
+                 else
+                 {
+                     NSLog(@"nolonger data present ");
+                     NSLog(@"last page no:%d",pageNumber);
+                     lastpage=pageNumber;
+                     pageNumber=1;
+                     myCount = [responseArray count];
+                 }
+             }
+             else{
+                 NSLog(@"data got nil");
              }
              
+    
          }:^(NSError *error)
          
          {
@@ -197,6 +214,43 @@
          }];
         
     }
+}
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([postdic objectForKey:@"csr_category"])
+    {
+        if (!lastpage)
+        {
+            if (indexPath.row ==  6) {
+                NSLog(@"load more");
+                pageNumber++;
+                NSLog(@"page no:%d",pageNumber);
+                [self PhotoAlbamServercall];
+            }
+        }
+        else if(indexPath.section==myCount )
+        {
+            [self.view makeToast:@"No more data" duration:1.0 position:@"bottom"];
+            
+        }
+    }
+}
+
+-(void)sucesstask{
+    if(!responseArray)
+    {
+        responseArray=[[postdic objectForKey:@"csr_category"] mutableCopy];
+    }
+    else{
+        if ([postdic objectForKey:@"csr_category"]) {
+            
+            NSMutableArray *arry=[[NSMutableArray alloc]init];
+            arry=[[postdic objectForKey:@"csr_category"] mutableCopy];
+            [(NSMutableArray *)responseArray addObjectsFromArray:arry]  ;
+        }
+    }
+    [_collectionView reloadData];
+    [SVProgressHUD dismiss];
 }
 
 @end

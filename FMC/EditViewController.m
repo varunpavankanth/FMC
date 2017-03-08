@@ -157,6 +157,7 @@
     //username.backgroundColor = [UIColor redColor]; // For testing purpose
     email.leftViewMode = UITextFieldViewModeAlways;// Set rightview mode
     email.font=[UIFont systemFontOfSize:15];
+    email.keyboardType=UIKeyboardTypeEmailAddress;
     //    userNameField.text=[_dict objectForKey:@"username"];
     email.delegate=self;
     email.text=[[NSUserDefaults standardUserDefaults] valueForKey:@"business_email_id"];;
@@ -182,6 +183,7 @@
     //username.backgroundColor = [UIColor redColor]; // For testing purpose
     altenatephono.leftViewMode = UITextFieldViewModeAlways;// Set rightview mode
     altenatephono.font=[UIFont systemFontOfSize:15];
+   // altenatephono.keyboardType=UIKeyboardTypeNumberPad;
     //    userNameField.text=[_dict objectForKey:@"username"];
     altenatephono.delegate=self;
     altenatephono.text=[[NSUserDefaults standardUserDefaults] valueForKey:@"contact_number"];;
@@ -209,7 +211,7 @@
     //username.backgroundColor = [UIColor redColor]; // For testing purpose
     phoneno.leftViewMode = UITextFieldViewModeAlways;// Set rightview mode
     phoneno.font=[UIFont systemFontOfSize:15];
-    //    userNameField.text=[_dict objectForKey:@"username"];
+   // phoneno.keyboardType=UIKeyboardTypeNumberPad;
     phoneno.delegate=self;
     phoneno.text=[[NSUserDefaults standardUserDefaults] valueForKey:@"alternate_contact_number"];
     phoneno.textColor=textcolor;
@@ -264,7 +266,7 @@
     
     chkBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     
-    
+    chkBtn.tag=1;
     [chkBtn setFrame:CGRectMake(padding,CGRectGetMaxY(intrestedlocation.frame)-2,20, 20)];
     [chkBtn setImage:[UIImage imageNamed:@"unchk.png"]
             forState:UIControlStateNormal];
@@ -293,6 +295,7 @@
     
     
     [chkBtn1 setFrame:CGRectMake(CGRectGetMinX(Hyderabad.frame)+90,CGRectGetMaxY(intrestedlocation.frame)-2,20, 20)];
+    chkBtn1.tag=2;
     [chkBtn1 setImage:[UIImage imageNamed:@"unchk.png"]
              forState:UIControlStateNormal];
     [chkBtn1 setImage:[UIImage imageNamed:@"chk.png"]
@@ -315,7 +318,7 @@
     chkBtn2 = [UIButton buttonWithType:UIButtonTypeCustom];
     
     [chkBtn2 setFrame:CGRectMake(CGRectGetMinX(Bangalore.frame)+80,CGRectGetMaxY(intrestedlocation.frame)-2,20, 20)];
-    
+    chkBtn2.tag=3;
     [chkBtn2 setImage:[UIImage imageNamed:@"unchk.png"]
              forState:UIControlStateNormal];
     [chkBtn2 setImage:[UIImage imageNamed:@"chk.png"]
@@ -336,7 +339,7 @@
     
     
     chkBtn3 = [UIButton buttonWithType:UIButtonTypeCustom];
-    
+    chkBtn3.tag=4;
     [chkBtn3 setFrame:CGRectMake(CGRectGetMinX(Chennai.frame)+60,CGRectGetMaxY(intrestedlocation.frame)-2,20, 20)];
     [chkBtn3 setImage:[UIImage imageNamed:@"unchk.png"]
              forState:UIControlStateNormal];
@@ -383,12 +386,93 @@
     [scrollView addSubview:signupbtn];
     scrollView.contentSize = CGSizeMake(scrollView.frame.size.width,CGRectGetMaxY(signupbtn.frame)+60);
 
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(keyboardOnScreen:) name:UIKeyboardWillShowNotification object:nil];
     // Do any additional setup after loading the view.
 }
+//- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+//{
+//    if(altenatephono)
+//    {
+//        
+//        int length = (int )[altenatephono.text length] ;
+//        if (length >= 10 && ![string isEqualToString:@""]) {
+//            altenatephono.text = [altenatephono.text substringToIndex:10];
+//            //  alterno.text = [alterno.text substringToIndex:10];
+//            return NO;
+//        }
+//    }
+//    else if(phoneno)
+//    {
+//       // phoneno.text=@"";
+//        int length1 = (int )[phoneno.text length] ;
+//        if (length1 >= 10 && ![string isEqualToString:@""]) {
+//            phoneno.text = [phoneno.text substringToIndex:10];
+//            return NO;
+//        }
+//    }
+//    return YES;
+//}
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    int limit = 9;
+    if(textField==altenatephono)
+    {
+    return !([altenatephono.text length]>limit && [string length] > range.length);
+    }
+    else if(textField==phoneno)
+    {
+       return !([phoneno.text length]>limit && [string length] > range.length);
+    }
+        return YES;
+
+}
+
+-(void)keyboardOnScreen:(NSNotification *)notification
+{
+    y=0;
+    h=0;
+    NSDictionary *info  = notification.userInfo;
+    NSValue      *value = info[UIKeyboardFrameEndUserInfoKey];
+    // CGRect frame        = textField.frame;
+    CGRect rawFrame      = [value CGRectValue];
+    CGRect keyboardFrame = [self.view convertRect:rawFrame fromView:nil];
+    y=keyboardFrame.origin.y;
+    h=keyboardFrame.size.height;
+    
+    
+    NSLog(@"keyboardFrame: %@", NSStringFromCGRect(keyboardFrame));
+}
+-(void)textFieldDidBeginEditing:(UITextField *)textField
+{
+//    if(textField==altenatephono)
+//    {
+//   altenatephono.text=@"";
+//        altenatephono.text=nil;
+//    }
+//    if(textField==phoneno)
+//    {
+//    phoneno.text=@"";
+//        phoneno.text=nil;
+//    }
+    float ty=textField.frame.origin.y;
+    float th=textField.frame.size.height;
+    if(y==0)
+        y=375;
+    if (ty+52>=y&&textField.tag!=11)
+    {
+        [scrollView setContentOffset:CGPointMake(0,(ty-y)+2*th+20) animated:NO];
+    }
+    if (textField.tag==11) {
+        [profilebtn resignFirstResponder];
+        [self takePic:nil];
+    }
+}
+
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    [scrollView setContentOffset:CGPointMake(0,51) animated:NO];
+    [scrollView setContentOffset:CGPointMake(0,-51) animated:NO];
     [userNameField resignFirstResponder];
     [lastname resignFirstResponder];
     [companyname resignFirstResponder];
@@ -404,8 +488,37 @@
 
 - (void)chkBtnHandler:(UIButton *)sender {
     // If checked, uncheck and visa versa
+    if(sender.tag==1)
+    {
+        [chkBtn setSelected:YES];
+        [chkBtn1 setSelected:NO];
+        [chkBtn2 setSelected:NO];
+        [chkBtn3 setSelected:NO];
+    }
+    else if(sender.tag==2){
+        [chkBtn setSelected:NO];
+        [chkBtn1 setSelected:YES];
+        [chkBtn2 setSelected:NO];
+        [chkBtn3 setSelected:NO];
+        
+    }
+    else if(sender.tag==3){
+        [chkBtn setSelected:NO];
+        [chkBtn1 setSelected:NO];
+        [chkBtn2 setSelected:YES];
+        [chkBtn3 setSelected:NO];
+        
+    }
+    else
+    {
+        [chkBtn setSelected:NO];
+        [chkBtn1 setSelected:NO];
+        [chkBtn2 setSelected:NO];
+        [chkBtn3 setSelected:YES];
+    }
     
-    [(UIButton *)sender setSelected:![(UIButton *)sender isSelected]];
+    
+   // [(UIButton *)sender setSelected:![(UIButton *)sender isSelected]];
 }
 
 
@@ -465,7 +578,7 @@
     }else{
         imagePicker = [[UIImagePickerController alloc]init];
         imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-        
+         imagePicker.delegate=self;
         [imagePicker setAllowsEditing:YES];
         [self presentViewController:imagePicker animated:YES completion:nil];
     }
@@ -618,6 +731,14 @@
             [self presentViewController:alertController animated:YES completion:nil];
             
         }
+        else if ([location.text isEqualToString:@""])
+        {
+            alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please enter current location"  preferredStyle:UIAlertControllerStyleAlert];
+            [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                [alertController dismissViewControllerAnimated:YES completion:nil];
+            }]];
+            [self presentViewController:alertController animated:YES completion:nil];
+        }
         
        else if(![self validatePhone:phoneno.text])
         {
@@ -754,7 +875,7 @@ didCompleteWithError:(nullable NSError *)error
          [SVProgressHUD dismiss];
         UIAlertController *alertController;
         if ([[dic valueForKey:@"status"] integerValue]==1)
-            Message=@"Your cahnges are Saved Secussfully";
+            Message=@"changes are Saved Secussfully";
         else
             Message=@"Sorry  we are unable to save changes this time";
         alertController = [UIAlertController  alertControllerWithTitle:@""  message:Message preferredStyle:UIAlertControllerStyleAlert];

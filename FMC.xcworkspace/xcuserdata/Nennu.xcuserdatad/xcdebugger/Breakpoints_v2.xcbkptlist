@@ -9,28 +9,12 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "FMC/ContactUs.m"
-            timestampString = "508594827.90178"
+            filePath = "FMC/Events.m"
+            timestampString = "510584948.762577"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "297"
-            endingLineNumber = "297"
-            landmarkName = "-tableView:didSelectRowAtIndexPath:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "FMC/EditViewController.m"
-            timestampString = "510318855.302973"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "733"
-            endingLineNumber = "733"
+            startingLineNumber = "232"
+            endingLineNumber = "232"
             landmarkName = "-URLSession:dataTask:didReceiveData:"
             landmarkType = "7">
          </BreakpointContent>
@@ -41,29 +25,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "FMC/EditViewController.m"
-            timestampString = "510318924.791507"
+            filePath = "FMC/Home.m"
+            timestampString = "510667804.954514"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "753"
-            endingLineNumber = "753"
-            landmarkName = "-sucesstask"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "FMC/EditViewController.m"
-            timestampString = "510319027.688975"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "712"
-            endingLineNumber = "712"
-            landmarkName = "-Editdetails:"
+            startingLineNumber = "535"
+            endingLineNumber = "535"
+            landmarkName = "-likePost"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -11,6 +11,7 @@
 @interface EditViewController : UIViewController<UIScrollViewDelegate,UITextFieldDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,NSURLSessionDelegate>
 {
     NSString * Message;
+    float y,h;
 }
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) NSURLSession *urlSession;

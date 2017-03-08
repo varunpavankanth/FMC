@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "SWRevealViewController.h"
 #import "Home.h"
-@interface BusinessEnablers : UIViewController
+@interface BusinessEnablers : UIViewController<UICollectionViewDelegate,UICollectionViewDataSource>
 
 @end

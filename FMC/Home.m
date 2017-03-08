@@ -36,6 +36,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+       [SVProgressHUD setForegroundColor:[UIColor blueColor]];
+    [SVProgressHUD setBackgroundColor:[UIColor clearColor]];
+     [SVProgressHUD show];
     self.documentInteractionController.delegate=self;
     NSURLSessionConfiguration *sessionConfig=[NSURLSessionConfiguration defaultSessionConfiguration];
     self.urlSession= [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:[NSOperationQueue mainQueue]];
@@ -73,10 +76,18 @@
 }
 -(void)Refreshtableview
 {
+    Reachability *networkReachability = [Reachability reachabilityForInternetConnection];
+    NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
+    if (networkStatus == NotReachable)
+    {
+        [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+    }
+    else {
     postdetailsarray=nil;
     lastpage=0x00;
     [self servercall];
     [tableview.refreshControl endRefreshing];
+    }
 }
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
     if ([dic objectForKey:@"posts_details"])
@@ -90,7 +101,7 @@
         [self servercall];
     }
     }
-    else if(indexPath.section==myCount )
+    else if(indexPath.section==myCount)
         {
             [self.view makeToast:@"No more data" duration:1.0 position:@"bottom"];
             
@@ -110,7 +121,9 @@
     NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
     if (networkStatus == NotReachable)
     {
+          [SVProgressHUD dismiss];
         [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+        
     }
     else {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
@@ -141,6 +154,13 @@
                                          }
                                          else{
                                              NSLog(@"data got nil");
+                                              [SVProgressHUD dismiss];
+                                             
+                                            UIAlertController *alertController = [UIAlertController  alertControllerWithTitle:@"Sorry"  message:@"Some thing went worng please refresh after some time"  preferredStyle:UIAlertControllerStyleAlert];
+                                             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                                                 [alertController dismissViewControllerAnimated:YES completion:nil];
+                                             }]];
+                                             [self presentViewController:alertController animated:YES completion:nil];
                                          }
                                                                 }];
                                          
@@ -150,6 +170,7 @@
 }
 -(void)sucesstask
 {
+     [SVProgressHUD dismiss];
     if(!postdetailsarray)
     {
     postdetailsarray=[[dic objectForKey:@"posts_details"] mutableCopy];
@@ -247,14 +268,8 @@
         if (postdetailsarray) {
               postdic=nil;
         customCell = (TableViewCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
-//        if (customCell == nil)
-//        {
-//            NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"SimpleTableCell" owner:self options:nil];
-//            customCell = [nib objectAtIndex:0];
-//        }
             postdic=[[NSMutableDictionary alloc]init];
         postdic=[postdetailsarray objectAtIndex:indexPath.section-1];
-        
         NSString *first_name=[postdic valueForKey:@"first_name"];
           //  NSString *capitalstring_=[self stringWithSentenceCapitalization:first_name];
             if (first_name == (NSString *)[NSNull null])
@@ -284,7 +299,14 @@
 [customCell.profile_imageView sd_setImageWithURL:[NSURL URLWithString:[postdic valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"deafult_icon.png"]];
             if([[postdic allKeys]containsObject:@"post_image"])
             {
-    [customCell.post_imageView sd_setImageWithURL:[NSURL URLWithString:[postdic valueForKey:@"post_image"]] placeholderImage:[UIImage imageNamed:@"deafult_icon.png"]];
+//                UIImage *imag=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[postdic valueForKey:@"post_image"]]]];
+    [customCell.post_imageView sd_setImageWithURL:[NSURL URLWithString:[postdic valueForKey:@"post_image"]] ];
+                customCell.post_imageView.backgroundColor=[UIColor colorWithRed:0.96 green:0.96 blue:0.96 alpha:1];
+               customCell.ImageHeightConstrait.constant=300;
+                customCell.post_imageView.userInteractionEnabled = NO;
+                
+               
+                //[customCell.contentView addSubview:view];
             }
            else if ([[postdic allKeys]containsObject:@"post_doc"])
             {
@@ -296,13 +318,18 @@
                 customCell.post_imageView.tag=indexPath.section;
                 imagepath=indexPath.section;
                 //Enable the lable UserIntraction
+                 customCell.post_imageView.backgroundColor=[UIColor whiteColor];
                 customCell.post_imageView.userInteractionEnabled = YES;
                 [customCell.post_imageView addGestureRecognizer:tapAction];
+                 customCell.ImageHeightConstrait.constant=128;
+              //  [customCell.post_imageView setContentMode:UIViewContentModeScaleAspectFit];
                 
             }
             else
             {
                 customCell.post_imageView.image=nil;
+                customCell.ImageHeightConstrait.constant=0;
+                customCell.post_imageView.userInteractionEnabled = NO;
             }
          
             if ([postdic valueForKey:@"recently_liked"])
@@ -316,15 +343,38 @@
                 //                 UIFont *boldFont = [UIFont fontWithName:@"Roboto-Regular" size:12];
                 [attributedString setAttributes:@{NSForegroundColorAttributeName: [UIColor lightGrayColor]} range:Likerange];
                 customCell.recentLike_label.attributedText = attributedString;
+//                customCell.recentLike_label.layer.borderWidth=1.0;
+//                customCell.recentLike_label.layer.borderColor=[UIColor lightGrayColor].CGColor;
+                CALayer *border=[CALayer layer];
+                border.borderWidth=1.0f;
+                border.borderColor=[UIColor lightGrayColor].CGColor;
+                border.frame=CGRectMake(0,customCell.profile_imageView.frame.origin.y-2,self.view.frame.size.width,1);
+             // [customCell.layer addSublayer:border];
+                
                 
             }
             else
             {
                 customCell.recentLike_label.attributedText=nil;
+                customCell.linesuparator.hidden=YES;
                 
             }
+            customCell.comentCount_label.text=@"";
             [customCell.like addTarget:self action:@selector(like:) forControlEvents:UIControlEventTouchUpInside];
+//            UITapGestureRecognizer *likeAction = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(like:)];
+//            likeAction.numberOfTapsRequired = 1;
+//            likeAction.delegate =self;
+//            customCell.likebuttonlable.userInteractionEnabled = YES;
+//            [customCell.likebuttonlable addGestureRecognizer:likeAction];
+            
             [customCell.sharebutton addTarget:self action:@selector(onShareButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+            UITapGestureRecognizer *tapAction1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onShareButtonClicked:)];
+            tapAction1.numberOfTapsRequired = 1;
+            tapAction1.delegate =self;
+             customCell.sharebuttonlable.userInteractionEnabled = YES;
+            [customCell.sharebuttonlable addGestureRecognizer:tapAction1];
+           
+            
             customCell.like.tag=indexPath.section-1;
         customCell.profileName_label.attributedText=attributedtext;
         customCell.content_label.text=[postdic valueForKey:@"post_text"];
@@ -356,7 +406,7 @@
     [self presentViewController:activity animated:YES completion:nil];
 }
 - (UIViewController *) documentInteractionControllerViewControllerForPreview: (UIDocumentInteractionController *) controller {
-    return self;
+    return [self navigationController];
 }
 - (void)openDocument:(UIImageView *)imageview {
    if (postdetailsarray)
@@ -385,6 +435,7 @@
    }
 }
 
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ((indexPath.section!=0))
@@ -398,6 +449,10 @@
             CommentsVc.post_id=[postdic valueForKey:@"post_id"];
         [self.navigationController pushViewController:CommentsVc animated:YES];
         }
+    }
+    else
+    {
+        [self share];
     }
 }
 -(void)textFieldDidBeginEditing:(UITextField *)textField
@@ -425,26 +480,25 @@
 -(void)like:(UIButton *)button
 {
     
-    if (postdetailsarray) {
+    if (postdetailsarray)
+    {
         
        postdic=[postdetailsarray objectAtIndex:button.tag];
         Sectionpath=button.tag;
         NSInteger i=[[postdic valueForKey:@"already_liked"] integerValue];
         if(i==0)
         {
-        NSString * mystring =[NSString stringWithFormat:@"user_id=%@&post_id=%@&post_like=1",[[NSUserDefaults standardUserDefaults]valueForKey:@"user_id"],[postdic valueForKey:@"post_id"]];
-        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-        [request setURL:[NSURL URLWithString:@"http://facilitymanagementcouncil.com/admin/service/postlike"]];
-         [request setHTTPBody:[mystring dataUsingEncoding:NSUTF8StringEncoding]];
-        [request setHTTPMethod:@"POST"];
-        [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-        NSLog(@"%@",request);
-        NSURLSessionDataTask *dataTask =[self.urlSession dataTaskWithRequest:request];
-        dic=nil;
-        [dataTask resume];
-           
-          
-           
+            NSString * mystring =[NSString stringWithFormat:@"user_id=%@&post_id=%@&post_like=1",[[NSUserDefaults standardUserDefaults]valueForKey:@"user_id"],[postdic valueForKey:@"post_id"]];
+            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+            [request setURL:[NSURL URLWithString:@"http://facilitymanagementcouncil.com/admin/service/postlike"]];
+            [request setHTTPBody:[mystring dataUsingEncoding:NSUTF8StringEncoding]];
+            [request setHTTPMethod:@"POST"];
+            [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+            NSLog(@"%@",request);
+            NSURLSessionDataTask *dataTask =[self.urlSession dataTaskWithRequest:request];
+            dic=nil;
+            [dataTask resume];
+            
         }
         else
         {
@@ -489,10 +543,16 @@ didCompleteWithError:(nullable NSError *)error
      i++;
         NSString *likes_count=[NSString stringWithFormat:@"%ld",i];
             [update setValue:likes_count forKey:@"likes_count"];
-            [postdetailsarray replaceObjectAtIndex:Sectionpath withObject:update];
-       [tableview beginUpdates];
-        [tableview reloadSections:[[NSIndexSet alloc] initWithIndex:Sectionpath] withRowAnimation:UITableViewRowAnimationNone];
-        [tableview endUpdates];
+      [postdetailsarray replaceObjectAtIndex:Sectionpath withObject:update];
+//        [tableview beginUpdates];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [tableview reloadSections:[[NSIndexSet alloc] initWithIndex:Sectionpath+1] withRowAnimation:UITableViewRowAnimationNone];
+           
+        });
+     
+       // [tableview reloadData];
+       
+//        [tableview endUpdates];
   
      [self.view makeToast:[dic valueForKey:@"message"] duration:1.0 position:@"bottom"];
     }

@@ -10,6 +10,8 @@
 @interface TableViewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *profile_imageView;
 @property (strong, nonatomic) IBOutlet UILabel *recentLike_label;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *ImageHeightConstrait;
+@property (strong, nonatomic) IBOutlet UILabel *linesuparator;
 
 @property (weak, nonatomic) IBOutlet UILabel *profileName_label;
 @property (weak, nonatomic) IBOutlet UILabel *content_label;
@@ -18,6 +20,8 @@
 @property (weak, nonatomic) IBOutlet UIImageView *post_imageView;
 @property (weak, nonatomic) IBOutlet UILabel *comentCount_label;
 @property (strong, nonatomic) IBOutlet UIButton *like;
+@property (strong, nonatomic) IBOutlet UILabel *likebuttonlable;
+@property (strong, nonatomic) IBOutlet UILabel *sharebuttonlable;
 
 
 @end

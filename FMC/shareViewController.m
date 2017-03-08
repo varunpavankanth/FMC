@@ -65,14 +65,14 @@
     border.frame=CGRectMake(0, 0,CGRectGetMaxX(View.frame), 1);
     [View.layer addSublayer:border];
     cam=[[UIButton alloc]init];
-    cam.frame=CGRectMake(15, CGRectGetMinY(border.frame)+10,15 ,15);
+    cam.frame=CGRectMake(15, CGRectGetMinY(border.frame)+10,20,20);
     [cam setBackgroundImage:[UIImage imageNamed:@"home_camera.png"] forState:UIControlStateNormal];
     [cam addTarget:self action:@selector(CameraButtonClicked) forControlEvents:UIControlEventTouchUpInside];
 
     [View addSubview:cam];
     link=[[UIButton alloc]init];
     [link setBackgroundImage:[UIImage imageNamed:@"home_link.png"] forState:UIControlStateNormal];
-    link.frame=CGRectMake(CGRectGetMaxX(cam.frame)+15, CGRectGetMinY(border.frame)+10,15 ,15);
+    link.frame=CGRectMake(CGRectGetMaxX(cam.frame)+15, CGRectGetMinY(border.frame)+10,20 ,20);
     [View addSubview:link];
     [link addTarget:self action:@selector(DoccumentButtonClicked) forControlEvents:UIControlEventTouchUpInside];
 
@@ -171,8 +171,8 @@
 
 }else{
     imagePicker = [[UIImagePickerController alloc]init];
+    imagePicker.delegate=self;
     imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-    
     [imagePicker setAllowsEditing:YES];
     [self presentViewController:imagePicker animated:YES completion:nil];
     }
@@ -342,6 +342,7 @@
 /*Server_call*/
 -(void)PostServerCall
 {
+    
     NSArray *objects;
     NSArray *keys;
     NSString *poststring;
@@ -371,6 +372,8 @@
         objects = [NSArray arrayWithObjects: [[NSUserDefaults standardUserDefaults] valueForKey:@"user_id"] ,_textview.text,nil];
         keys = [NSArray arrayWithObjects:@"user_id",@"post_text",nil];
     }
+    if(!(extension) &![_textview.text isEqualToString:@"Share an artical,Photo or idea"]||![_textview.text isEqualToString:@""])
+    {
     NSDictionary *jsonDict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:jsonDict options:0 error:nil];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
@@ -381,6 +384,10 @@
     NSURLSessionDataTask *dataTask =[self.urlSession dataTaskWithRequest:request];
     dic=nil;
     [dataTask resume];
+    }
+    else{
+        [self.view makeToast:@"empty post can't be shared" duration:1.0 position:@"bottom"];
+    }
 }
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
@@ -409,6 +416,9 @@ didCompleteWithError:(nullable NSError *)error
 }
 -(void)sucesstask
 {
+    View.frame=CGRectMake(0, CGRectGetMaxY(self.view.frame)-50,CGRectGetMaxX(self.view.frame), 50);
+    NSLog(@"%f",View.frame.origin.y);
+    [View setFrame:View.frame];
     UIAlertController *alertController;
     alertController = [UIAlertController  alertControllerWithTitle:@""  message:[dic valueForKey:@"message"]  preferredStyle:UIAlertControllerStyleAlert];
     [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {

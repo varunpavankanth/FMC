@@ -18,10 +18,13 @@
     int pageNumber;
     NSMutableArray  * responseArray;
     NSMutableDictionary *dic;
+    NSMutableDictionary *postdic;
      NSArray *searchResults;
     UIImageView *imgv;
      NSMutableArray * resultArray;
     NSArray * resultsArrayfromJSON;
+    int lastpage;
+      NSUInteger myCount;
 }
 
 @end
@@ -36,11 +39,13 @@
         // Do any additional setup after loading the view.
 //    searchBar=[[UISearchBar alloc]initWithFrame:CGRectMake(0, 64, CGRectGetWidth(self.view.frame), 44)];
 //    [self.view addSubview:searchBar];
+    self.title=@"Member Directory";
     self.searchController=[[UISearchController alloc]initWithSearchResultsController:nil];
     self.searchController.searchBar.delegate=self;
     self.searchController.searchResultsUpdater=self;
     self.searchController.dimsBackgroundDuringPresentation=NO;
-       tv=[[UITableView alloc]initWithFrame:CGRectMake(0,0, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame))];
+    self.view.backgroundColor=[UIColor colorWithRed:0.96 green:0.96 blue:0.96 alpha:1];
+    tv=[[UITableView alloc]initWithFrame:CGRectMake(05, 0, CGRectGetWidth(self.view.frame)-10, CGRectGetHeight(self.view.frame))];
     tv.tableHeaderView=self.searchController.searchBar;
     tv.backgroundColor=[UIColor whiteColor];
     tv.separatorColor=[UIColor clearColor];
@@ -51,6 +56,7 @@
     
     
 }
+
 -(void)eventServercall
 
 {
@@ -76,13 +82,27 @@
          {
              if ([result isKindOfClass:[NSDictionary class]])
              {
-                resultsArrayfromJSON=(NSMutableArray*)[(NSDictionary*)result valueForKeyPath:@"member_details"];
-                 [tv reloadData];
-                 [SVProgressHUD dismiss];
-
+                 if([result objectForKey:@"member_details"])
+                 {
+                     postdic=result;
+                     [self sucesstask];
+                 
+                 }
+                 else
+                 {
+                     NSLog(@"nolonger data present ");
+                     NSLog(@"last page no:%d",pageNumber);
+                     lastpage=pageNumber;
+                     pageNumber=1;
+                     myCount = [resultsArrayfromJSON count];
+                 }
              }
-             
-         }:^(NSError *error)
+             else{
+                 NSLog(@"data got nil");
+             }
+             }
+         
+         :^(NSError *error)
          
          {
              if (error)
@@ -96,10 +116,42 @@
     }
 }
 
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
+    if ([postdic objectForKey:@"member_details"])
+    {
+        if (!lastpage)
+        {
+            if (indexPath.section ==  resultsArrayfromJSON.count-2) {
+                NSLog(@"load more");
+                pageNumber++;
+                NSLog(@"page no:%d",pageNumber);
+                [self eventServercall];
+            }
+        }
+        else if(indexPath.section==myCount )
+        {
+            [self.view makeToast:@"No more data" duration:1.0 position:@"bottom"];
+            
+        }
+    }
+}
 
 -(void)sucesstask
 {
+    if(!resultsArrayfromJSON)
+    {
+    resultsArrayfromJSON=[[postdic objectForKey:@"member_details"] mutableCopy];
+    }
+    else{
+        if ([postdic objectForKey:@"member_details"]) {
+            
+            NSMutableArray *arry=[[NSMutableArray alloc]init];
+            arry=[[postdic objectForKey:@"member_details"] mutableCopy];
+            [(NSMutableArray *)resultsArrayfromJSON addObjectsFromArray:arry]  ;
+        }
+    }
     [tv reloadData];
+    [SVProgressHUD dismiss];
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
@@ -122,9 +174,6 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return 80;
-}
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    cell.backgroundColor = [UIColor clearColor];
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -160,22 +209,11 @@
            [cell.contentView  addSubview:cell.cellImageView];
        }
     
-//    MembersModel * track;
-//  
-//    if (self.searchController.active == YES && ![self.searchController.searchBar.text isEqualToString:@""])
-//    {
-//    track = [resultArray objectAtIndex:indexPath.section];
-//    }
-//    else
-//    {
-//        track = [responseArray objectAtIndex:indexPath.section];
-//    }
-//    if (track)
-//    {
-//        [cell bindDataWithCell:track :indexPath :tableView];
-//    }
-
-
+    [cell.layer setCornerRadius:10.0f];
+    cell.selectionStyle=UITableViewCellSelectionStyleNone;
+    [cell.layer setBorderColor:[[UIColor lightGrayColor]CGColor]];
+    cell.layer.cornerRadius=7.0f;
+    cell.layer.borderWidth=1.0f;
     
     return cell;
 }
@@ -206,19 +244,7 @@
 //    [self searchForText:searchString scope:searchController.searchBar.selectedScopeButtonIndex];
     [self.tv reloadData];
 }
-//- (void)searchBar:(UISearchBar *)SearchBar textDidChange:(NSString *)searchText
-//{
-//    [searchBar resignFirstResponder];
-//    [tv reloadData];
-//}
-//- (void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope
-//{
-//    NSPredicate *resultPredicate = [NSPredicate
-//                                    predicateWithFormat:@"SELF contains[cd] %@",
-//                                    searchText];
-//    
-//    searchResults = [responseArray filteredArrayUsingPredicate:resultPredicate];
-//}
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

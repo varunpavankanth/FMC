@@ -10,8 +10,7 @@
 #import "Reachability.h"
 #import "UIView+Toast.h"
 #import "APIDataFetcher.h"
-
-
+#import "SVProgressHUD.h"
 #import "AwardsinforViewController.h"
 
 @interface Awards ()<UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout>
@@ -19,6 +18,11 @@
     int pageNumber;
     NSDictionary *dic;
     NSMutableArray *responseArray;
+    NSMutableDictionary *postdic;
+    NSUInteger myCount;
+    int lastpage;
+    int pageno;
+
 }
 
 
@@ -36,6 +40,7 @@
     pageNumber =1;
     [self AwardsServercall
 ];
+     [SVProgressHUD show];
     self.edgesForExtendedLayout=UIRectEdgeNone;
     
     [self.navigationController setNavigationBarHidden:NO];
@@ -164,13 +169,23 @@
              
              if ([result isKindOfClass:[NSDictionary class]])
              {
-                 responseArray=(NSMutableArray*)[(NSDictionary*)result valueForKeyPath:@"award_years"];
-                 ////                 for (NSDictionary * resultDict in resultsArrayfromJSON)
-                 ////                 {
-                 ////                     responseArray [resultDict ]
-                 //                 }
-                 [_collectionView reloadData];
-                 //
+                 if([result objectForKey:@"award_years"])
+                 {
+                     postdic=result;
+                     [self sucesstask];
+                     
+                 }
+                 else
+                 {
+                     NSLog(@"nolonger data present ");
+                     NSLog(@"last page no:%d",pageNumber);
+                     lastpage=pageNumber;
+                     pageNumber=1;
+                     myCount = [responseArray count];
+                 }
+             }
+             else{
+                 NSLog(@"data got nil");
              }
              
          }:^(NSError *error)
@@ -186,5 +201,41 @@
         
     }
 }
-
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([postdic objectForKey:@"award_years"])
+    {
+        if (!lastpage)
+        {
+            if (indexPath.row ==  responseArray.count-2) {
+                NSLog(@"load more");
+                pageNumber++;
+                NSLog(@"page no:%d",pageNumber);
+                [self AwardsServercall];
+            }
+        }
+        else if(indexPath.section==myCount )
+        {
+            [self.view makeToast:@"No more data" duration:1.0 position:@"bottom"];
+            
+        }
+    }
+}
+-(void)sucesstask
+{
+    if(!responseArray)
+    {
+        responseArray=[[postdic objectForKey:@"award_years"] mutableCopy];
+    }
+    else{
+        if ([postdic objectForKey:@"award_years"]) {
+            
+            NSMutableArray *arry=[[NSMutableArray alloc]init];
+            arry=[[postdic objectForKey:@"award_years"] mutableCopy];
+            [(NSMutableArray *)responseArray addObjectsFromArray:arry]  ;
+        }
+    }
+    [_collectionView reloadData];
+    [SVProgressHUD dismiss];
+}
 @end

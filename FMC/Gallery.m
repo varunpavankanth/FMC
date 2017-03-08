@@ -12,20 +12,22 @@
 #import "APIDataFetcher.h"
 #import "UIImageView+WebCache.h"
 #import "GalleryCollectionViewController.h"
+#import "SVProgressHUD.h"
 #define padding 5
 
 @interface Gallery ()<UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout>
 {
     int pageNumber;
+    NSUInteger myCount;
+    int lastpage;
     NSDictionary *dic;
     NSMutableArray *responseArray;
+    NSMutableDictionary *postdic;
 }
 
 
 @property(nonatomic,retain)UICollectionView*collectionView;
 
-@property(nonatomic,retain)NSArray*imagesNameArray;
-@property(nonatomic,retain)NSArray*titleArray;
 @end
 
 
@@ -35,6 +37,7 @@
     [super viewDidLoad];
     pageNumber =1;
     [self PhotoAlbamServercall];
+    [SVProgressHUD show];
     self.view.backgroundColor=[UIColor whiteColor];
     self.navigationItem.title=@"Gallery";
     self.navigationController.navigationBar.tintColor=[UIColor whiteColor];
@@ -154,6 +157,26 @@
     [self.navigationController pushViewController:VC animated:YES];
     
 }
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([postdic objectForKey:@"album_details"])
+    {
+        if (!lastpage)
+        {
+            if (indexPath.row ==  responseArray.count-4) {
+                NSLog(@"load more");
+                pageNumber++;
+                NSLog(@"page no:%d",pageNumber);
+                [self PhotoAlbamServercall];
+            }
+        }
+        else if(indexPath.section==myCount )
+        {
+            [self.view makeToast:@"No more data" duration:1.0 position:@"bottom"];
+            
+        }
+    }
+}
 
 /*serverCall*/
 
@@ -176,14 +199,34 @@
             
              if ([result isKindOfClass:[NSDictionary class]])
                           {
-                        responseArray=(NSMutableArray*)[(NSDictionary*)result valueForKeyPath:@"album_details"];
-             ////                 for (NSDictionary * resultDict in resultsArrayfromJSON)
-             ////                 {
-             ////                     responseArray [resultDict ]
-             //                 }
-             [_collectionView reloadData];
-             //
+                              if([result objectForKey:@"album_details"])
+                              {
+                                  postdic=result;
+                                  [self sucesstask];
+                                  
+                              }
+                              else
+                              {
+                                  NSLog(@"nolonger data present ");
+                                  NSLog(@"last page no:%d",pageNumber);
+                                  lastpage=pageNumber;
+                                  pageNumber=1;
+                                  myCount = [responseArray count];
+                              }
                           }
+             else{
+                 NSLog(@"data got nil");
+             }
+                              
+//                        responseArray=(NSMutableArray*)[(NSDictionary*)result valueForKeyPath:@"album_details"];
+//             ////                 for (NSDictionary * resultDict in resultsArrayfromJSON)
+//             ////                 {
+//             ////                     responseArray [resultDict ]
+//             //                 }
+//             [_collectionView reloadData];
+                              
+//             //
+             
              
          }:^(NSError *error)
          
@@ -197,5 +240,24 @@
          }];
         
     }
+}
+-(void)sucesstask
+{
+    if(!responseArray)
+    {
+        responseArray=[[postdic objectForKey:@"album_details"] mutableCopy];
+    }
+    else{
+        if ([postdic objectForKey:@"album_details"]) {
+            
+            NSMutableArray *arry=[[NSMutableArray alloc]init];
+            arry=[[postdic objectForKey:@"album_details"] mutableCopy];
+            [(NSMutableArray *)responseArray addObjectsFromArray:arry]  ;
+        }
+    }
+    [_collectionView reloadData];
+    [SVProgressHUD dismiss];
+
+    
 }
 @end
