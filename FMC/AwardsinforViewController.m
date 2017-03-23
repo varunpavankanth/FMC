@@ -11,6 +11,9 @@
 #import "UIView+Toast.h"
 #import "APIDataFetcher.h"
 #import "UIImageView+WebCache.h"
+#import "SVProgressHUD.h"
+#import "WebViewController.h"
+
 
 @interface AwardsinforViewController ()
 {
@@ -27,6 +30,7 @@
 @synthesize tv;
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [SVProgressHUD show];
     selected=NO;
     self.images=[[NSMutableArray alloc]initWithObjects:@"cric.jpeg",@"login_icon.png",@"login_icon.png",@"login_icon.png",@"login_icon.png",@"login_icon.png", nil];
     self.label1=[[NSMutableArray alloc]initWithObjects:@"Name",@"Name",@"Name",@"Name",@"Name",@"Name", nil];
@@ -139,15 +143,36 @@
 {
     if(responseArray)
     {
+
         dic=[responseArray objectAtIndex:indexPath.section];
-        UIWebView *view = [[UIWebView alloc] initWithFrame:CGRectMake(0,50, self.view.frame.size.width,self.view.frame.size.height-40)];
-        NSString *url=[NSString stringWithFormat:@"https://docs.google.com/viewerng/viewer?url=%@",[dic valueForKey:@"award_doc"]];
-        NSURL *nsurl=[NSURL URLWithString:url];
-        NSURLRequest *nsrequest=[NSURLRequest requestWithURL:nsurl];
-        [view loadRequest:nsrequest];
-        [self.view addSubview:view];
+        WebViewController *VC=[[WebViewController alloc]init];
+        if (responseArray) {
+            dic=[responseArray objectAtIndex:indexPath.row];
+            VC.strg=[dic valueForKey:@"award_doc"];
+        }
+        
+        [self.navigationController pushViewController:VC animated:YES];
+//        [SVProgressHUD show];
+//        dic=[responseArray objectAtIndex:indexPath.section];
+//        UIWebView *view = [[UIWebView alloc] initWithFrame:CGRectMake(0,50, self.view.frame.size.width,self.view.frame.size.height-40)];
+//        NSString *url=[NSString stringWithFormat:@"https://docs.google.com/viewerng/viewer?url=%@",[dic valueForKey:@"award_doc"]];
+//        view.delegate=self;
+//        NSURL *nsurl=[NSURL URLWithString:url];
+//        NSURLRequest *nsrequest=[NSURLRequest requestWithURL:nsurl];
+//        [view loadRequest:nsrequest];
+//        [self.view addSubview:view];
       
     }
+}
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    [SVProgressHUD dismiss];
+}
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [SVProgressHUD dismiss];
+    
 }
 -(void)AwardsServercall
 
@@ -156,7 +181,20 @@
     NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
     if (networkStatus == NotReachable)
     {
+        [SVProgressHUD dismiss];
         [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+        UIAlertController *alertController;
+        alertController = [UIAlertController  alertControllerWithTitle:@"No internet"  message:@"This feature requires internet connection.please check your internet settings and try again"  preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+        }]];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"settings" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            //            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+            NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+            [[UIApplication sharedApplication] openURL:url];
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
+      //  [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
     }
     else {
         
@@ -168,9 +206,17 @@
              
              if ([result isKindOfClass:[NSDictionary class]])
              {
+                 [SVProgressHUD dismiss];
                  responseArray=(NSMutableArray*)[(NSDictionary*)result valueForKeyPath:@"award_details"];
                  
                  [tv reloadData];
+             }
+             else
+             {
+                 [SVProgressHUD dismiss];
+                 [self.view makeToast:@"Please check network" duration:1.0 position:@"center"];
+                 
+
              }
              
          }:^(NSError *error)

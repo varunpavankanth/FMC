@@ -12,6 +12,7 @@
 #import "UIImageView+WebCache.h"
 #import "APIDataFetcher.h"
 #import "photoZoom.h"
+#import "SVProgressHUD.h"
 #define padding 2
 @interface GalleryCollectionViewController ()<UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout>{
     int pageNumber;
@@ -30,6 +31,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [SVProgressHUD show];
     self.edgesForExtendedLayout=UIRectEdgeNone;
     
     [self.navigationController setNavigationBarHidden:NO];
@@ -118,6 +120,7 @@
     [collectionView deselectItemAtIndexPath:indexPath animated:YES];
     photoZoom *pt=[[photoZoom alloc]init];
     if (responseArray) {
+         [SVProgressHUD dismiss];
         dic=[responseArray objectAtIndex:indexPath.row];
         pt.imageUrl=[NSURL URLWithString:[dic valueForKey:@"image_path"]];
         pt.title=[dic valueForKey:@"image_title"];
@@ -132,8 +135,19 @@
     NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
     if (networkStatus == NotReachable)
     {
+        [SVProgressHUD dismiss];
         [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
-    }
+        UIAlertController *alertController;
+        alertController = [UIAlertController  alertControllerWithTitle:@"No internet"  message:@"This feature requires internet connection.please check your internet settings and try again"  preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+        }]];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"settings" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            //            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+            NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+            [[UIApplication sharedApplication] openURL:url];
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];    }
     else {
         
         
@@ -144,6 +158,7 @@
              
              if ([result isKindOfClass:[NSDictionary class]])
              {
+                 [SVProgressHUD dismiss];
                  responseArray=(NSMutableArray*)[(NSDictionary*)result valueForKeyPath:@"gallery_details"];
                  ////                 for (NSDictionary * resultDict in resultsArrayfromJSON)
                  ////                 {
@@ -159,6 +174,7 @@
              if (error)
              {
                  NSLog(@"%@", error.localizedDescription);
+                [self.view makeToast:@"Please check network" duration:1.0 position:@"center"];
              }
              
              
@@ -166,10 +182,11 @@
         
     }
 }
-
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [SVProgressHUD dismiss];
     
-
-
-
+}
 
 @end

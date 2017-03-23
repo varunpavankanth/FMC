@@ -8,13 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
-@interface Commentsviewcontroller : UIViewController<UITextFieldDelegate,NSURLSessionDelegate>
+@interface Commentsviewcontroller : UIViewController<UITextFieldDelegate,NSURLSessionDelegate,UIScrollViewDelegate,UIGestureRecognizerDelegate>
 {
     UIView   *View;
     UITextField *textfield;
     NSMutableDictionary *commentdic;
     NSError *error1;
     float y,h;
+     UIScrollView *scrollView;
+    UIImageView  *  ImageView ;
 }
 @property  NSURLSession *urlSession;
 @property(nonatomic,strong)NSMutableDictionary *dic;

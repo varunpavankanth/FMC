@@ -7,11 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TOCropViewController.h"
 
-@interface EditViewController : UIViewController<UIScrollViewDelegate,UITextFieldDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,NSURLSessionDelegate>
+@interface EditViewController : UIViewController<UIScrollViewDelegate,UITextFieldDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,NSURLSessionDelegate,TOCropViewControllerDelegate>
 {
     NSString * Message;
     float y,h;
+    BOOL camerabool;
 }
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) NSURLSession *urlSession;

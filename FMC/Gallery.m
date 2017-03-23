@@ -137,6 +137,12 @@
     
     return temp ;
 }
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [SVProgressHUD dismiss];
+    
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -187,7 +193,20 @@
     NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
     if (networkStatus == NotReachable)
     {
+       // [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+        [SVProgressHUD dismiss];
         [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+        UIAlertController *alertController;
+        alertController = [UIAlertController  alertControllerWithTitle:@"No internet"  message:@"This feature requires internet connection.please check your internet settings and try again"  preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+        }]];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"settings" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            //            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+            NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+            [[UIApplication sharedApplication] openURL:url];
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
     }
     else {
         
@@ -215,7 +234,10 @@
                               }
                           }
              else{
-                 NSLog(@"data got nil");
+               //  NSLog(@"data got nil");
+                 [SVProgressHUD dismiss];
+                 [self.view makeToast:@"Please check network" duration:1.0 position:@"center"];
+                 
              }
                               
 //                        responseArray=(NSMutableArray*)[(NSDictionary*)result valueForKeyPath:@"album_details"];

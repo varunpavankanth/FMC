@@ -96,11 +96,11 @@
     [cell.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     if (responseArray) {
         dic=[responseArray objectAtIndex:indexPath.row];
-    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(cell.frame),CGRectGetWidth(cell.frame)/1.43)];
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(cell.frame.size.width/2-50, 0, 100,100/1.43)];
     imageView.image = [UIImage imageNamed:@"awards.jpeg"];
     [cell.contentView addSubview:imageView];
     UIButton *button = [UIButton  buttonWithType:UIButtonTypeSystem];
-    button.frame = CGRectMake(CGRectGetMinX(imageView.frame), CGRectGetMinX(imageView.frame)+cell.frame.size.height-20, CGRectGetWidth(cell.frame),20);
+    button.frame = CGRectMake(0,cell.frame.size.height-40, CGRectGetWidth(cell.frame),40);
     [button setBackgroundImage:[UIImage imageNamed:@"labelImage"] forState:UIControlStateNormal];
     [button setTitle:[dic valueForKey:@"year"] forState:UIControlStateNormal];
 
@@ -150,6 +150,12 @@
     
 }
 }
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [SVProgressHUD dismiss];
+    
+}
 -(void)AwardsServercall
 
 {
@@ -157,7 +163,21 @@
     NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
     if (networkStatus == NotReachable)
     {
+       // [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+        [SVProgressHUD dismiss];
         [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+        UIAlertController *alertController;
+        alertController = [UIAlertController  alertControllerWithTitle:@"No internet"  message:@"This feature requires internet connection.please check your internet settings and try again"  preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+        }]];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"settings" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            //            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+            NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+            [[UIApplication sharedApplication] openURL:url];
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
+
     }
     else {
         
@@ -185,7 +205,9 @@
                  }
              }
              else{
-                 NSLog(@"data got nil");
+                // NSLog(@"data got nil");
+                 [SVProgressHUD dismiss];
+                  [self.view makeToast:@"Please check network" duration:1.0 position:@"center"];
              }
              
          }:^(NSError *error)
@@ -193,7 +215,9 @@
          {
              if (error)
              {
-                 NSLog(@"%@", error.localizedDescription);
+              //   NSLog(@"%@", error.localizedDescription);
+                 [SVProgressHUD dismiss];
+                 [self.view makeToast:@"Please check network" duration:1.0 position:@"center"];
              }
              
              
@@ -201,25 +225,26 @@
         
     }
 }
+
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([postdic objectForKey:@"award_years"])
-    {
-        if (!lastpage)
-        {
-            if (indexPath.row ==  responseArray.count-2) {
-                NSLog(@"load more");
-                pageNumber++;
-                NSLog(@"page no:%d",pageNumber);
-                [self AwardsServercall];
-            }
-        }
-        else if(indexPath.section==myCount )
-        {
-            [self.view makeToast:@"No more data" duration:1.0 position:@"bottom"];
-            
-        }
-    }
+//    if ([postdic objectForKey:@"award_years"])
+//    {
+//        if (!lastpage)
+//        {
+//            if (indexPath.row ==  responseArray.count-2) {
+//                NSLog(@"load more");
+//                pageNumber++;
+//                NSLog(@"page no:%d",pageNumber);
+//                [self AwardsServercall];
+//            }
+//        }
+//        else if(indexPath.section==myCount )
+//        {
+//            [self.view makeToast:@"No more data" duration:1.0 position:@"bottom"];
+//            
+//        }
+//    }
 }
 -(void)sucesstask
 {

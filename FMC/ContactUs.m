@@ -48,12 +48,12 @@
 }
 
 - (void)prepareTableHeaderView{
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 85)];
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 140)];
     [view setBackgroundColor:[UIColor clearColor]];
     
     CGFloat width = 140;
     CGFloat padding = 10;
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"versatile"]];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"fmc_logo.png"]];
     imageView.frame = CGRectMake((view.frame.size.width - width)/2, padding, width, view.frame.size.height - 2*padding);
     imageView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     [view addSubview:imageView];
@@ -87,7 +87,7 @@
 }
 
 - (void)onShareButtonClicked:(id)sender{
-    UIActivityViewController *activity = [[UIActivityViewController alloc] initWithActivityItems:[NSArray arrayWithObjects:@"https://itunes.apple.com/us/app/kcr-the-leader/id1113302037?mt=8",nil] applicationActivities:nil];
+    UIActivityViewController *activity = [[UIActivityViewController alloc] initWithActivityItems:[NSArray arrayWithObjects:@"https://itunes.apple.com/in/app/fmcouncil/id1212203642?mt=8",nil] applicationActivities:nil];
     [self presentViewController:activity animated:YES completion:nil];
 }
 - (void)prepareDataSource{
@@ -108,26 +108,26 @@
     NSMutableDictionary *phoneDict = [NSMutableDictionary dictionary];
     [phoneDict setObject:@"+91 - 9701930011/22" forKey:@"value"];
     [phoneDict setObject:@"static" forKey:@"type"];
-    [phoneDict setObject:@"phone" forKey:@"image"];
+    [phoneDict setObject:@"mobile_icon.png" forKey:@"image"];
     [contactRowsArray addObject:phoneDict];
     
     NSMutableDictionary *landLineDict = [NSMutableDictionary dictionary];
     [landLineDict setObject:@"+91 - 4064557448/84" forKey:@"value"];
     [landLineDict setObject:@"static" forKey:@"type"];
-    [landLineDict setObject:@"landline" forKey:@"image"];
+    [landLineDict setObject:@"contactsus_icon.png" forKey:@"image"];
     [contactRowsArray addObject:landLineDict];
     
     NSMutableDictionary *emailDict = [NSMutableDictionary dictionary];
     [emailDict setObject:@"versatilemobitech@gmail.com" forKey:@"value"];
     [emailDict setObject:@"static" forKey:@"type"];
-    [emailDict setObject:@"mail" forKey:@"image"];
+    [emailDict setObject:@"mail_icon.png" forKey:@"image"];
     
     [contactRowsArray addObject:emailDict];
     
     NSMutableDictionary *websiteDict = [NSMutableDictionary dictionary];
     [websiteDict setObject:@"www.versatilemobitech.com" forKey:@"value"];
     [websiteDict setObject:@"static" forKey:@"type"];
-    [websiteDict setObject:@"website" forKey:@"image"];
+    [websiteDict setObject:@"chhangepassword" forKey:@"image"];
     
     [contactRowsArray addObject:websiteDict];
     
@@ -275,7 +275,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.section == 1){
+    if (indexPath.section == 0){
         if (indexPath.row == 0){
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Call Using" message:@"" preferredStyle:UIAlertControllerStyleActionSheet];
             UIAlertAction * number1Btn = [UIAlertAction actionWithTitle:@"+91 9701930011" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {

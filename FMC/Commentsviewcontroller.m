@@ -19,6 +19,10 @@
     NSMutableArray *responseArray;
     NSMutableArray *comments;
     NSMutableDictionary *postdic;
+    UIView *_transperentview1;
+    NSURL *imageUrl;
+    UIView *hide;
+    UIButton* Post;
 }
 @end
 
@@ -43,8 +47,13 @@
     textfield.layer.borderWidth=1.0;
     textfield.placeholder=@"Comment";
     [textfield setRightViewMode:UITextFieldViewModeAlways];
-    UIView *hide=[[UIView alloc]initWithFrame:CGRectMake(textfield.frame.size.width-40,0,40,40)];
-    UIButton* Post= [[UIButton alloc]initWithFrame:CGRectMake(5, 10, 20, 20)];
+    hide=[[UIView alloc]initWithFrame:CGRectMake(textfield.frame.size.width-40,0,40,40)];
+    Post= [[UIButton alloc]initWithFrame:CGRectMake(5, 10, 20, 20)];
+    UITapGestureRecognizer *tapAction1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(commentPost)];
+    tapAction1.numberOfTapsRequired = 1;
+    tapAction1.delegate =self;
+    hide.userInteractionEnabled = YES;
+   // [hide addGestureRecognizer:tapAction1];
     [Post setBackgroundImage:[UIImage imageNamed:@"comment.png"] forState:UIControlStateNormal];
     Post.tintColor=[UIColor blueColor];
     [Post addTarget:self action:@selector(commentPost) forControlEvents:UIControlEventTouchDown];
@@ -110,12 +119,31 @@
     if (customCell==nil) {
         customCell=[[CommentsCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Commentcell"];
     }
+         customCell.selectionStyle = UITableViewCellSelectionStyleNone;
         if (responseArray) {
             self.dic=[responseArray objectAtIndex:0];
+            NSString *str1=[self.dic objectForKey:@"first_name"];
+            if (str1 == (NSString *)[NSNull null])
+                str1=@"NULL";
+            else
+                [str1  localizedCapitalizedString];
+
+            NSString *str3=[self.dic objectForKey:@"last_name"];
             
-        NSString *str1=[self stringWithSentenceCapitalization:[self.dic objectForKey:@"first_name"]];
-        NSString *str3=[self stringWithSentenceCapitalization:[self.dic objectForKey:@"last_name"]];
-        NSString *str2=[self stringWithSentenceCapitalization:[self.dic objectForKey:@"company_name"]];
+            if (str3 == (NSString *)[NSNull null])
+                str3=@"NULL";
+            else
+                [str3  localizedCapitalizedString];
+            
+            NSString *str2=[self.dic objectForKey:@"company_name"];
+            
+            if (str2 == (NSString *)[NSNull null])
+                str2=@"NULL";
+            else
+                [str2  localizedCapitalizedString];
+       // NSString *str1=[self stringWithSentenceCapitalization:[self.dic objectForKey:@"first_name"]];
+      //  NSString *str3=[self stringWithSentenceCapitalization:[self.dic objectForKey:@"last_name"]];
+      //  NSString *str2=[self stringWithSentenceCapitalization:[self.dic objectForKey:@"company_name"]];
         NSString *text = [NSString stringWithFormat:@"%@ %@\n%@",str1,str3,str2];
         NSMutableAttributedString *attributedtext=[[NSMutableAttributedString alloc]initWithString:text];
         NSRange  range=[text rangeOfString:str2];
@@ -135,17 +163,39 @@
             tapAction1.delegate =self;
             customCell.ShareView.userInteractionEnabled = YES;
             [customCell.ShareView addGestureRecognizer:tapAction1];
-             [customCell.postImageView sd_setImageWithURL:[NSURL URLWithString:[self.dic objectForKey:@"profile_pic"]]];
-            if ([self.dic valueForKey:@"post_doc"])
+             [customCell.profileImageview sd_setImageWithURL:[NSURL URLWithString:[self.dic objectForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"deafult_icon.png"]];
+            if([[postdic allKeys]containsObject:@"post_image"])
+            {
+                imageUrl=[NSURL URLWithString:[self.dic objectForKey:@"post_image"]];
+                [customCell.postImageView sd_setImageWithURL:imageUrl placeholderImage:[UIImage imageNamed:@"deafult_icon.png"]];
+                customCell.postImageView.backgroundColor=[UIColor colorWithRed:0.96 green:0.96 blue:0.96 alpha:1];
+                customCell.postHeightConstraint.constant=300;
+                customCell.postImageView.userInteractionEnabled = NO;
+                UITapGestureRecognizer *tapAction2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(ImageZoom:)];
+                tapAction2.numberOfTapsRequired = 1;
+                tapAction2.delegate =self;
+                customCell.postImageView.userInteractionEnabled = YES;
+                [customCell.postImageView addGestureRecognizer:tapAction2];
+                
+            }
+          else  if ([self.dic valueForKey:@"post_doc"])
             {
                 customCell.postImageView.image=[UIImage imageNamed:@"pdf_image.png"];
+                customCell.postHeightConstraint.constant=150;
+                customCell.postImageView.userInteractionEnabled = NO;
             }
             else
             {
-                             [customCell.postImageView sd_setImageWithURL:[NSURL URLWithString:[self.dic objectForKey:@"post_image"]]];
+                 customCell.postHeightConstraint.constant=0;
             }
-        customCell.contentlabel.text=[self.dic objectForKey:@"post_text"];
-        }
+//        customCell.contentlabel.text=[self.dic objectForKey:@"post_text"];
+             customCell.txtComment.font=[UIFont fontWithName:@"Roboto-Regular" size:12];
+            customCell.txtComment.text=[postdic valueForKey:@"post_text"];
+            CGSize sizeThatFitsTextView = [customCell.txtComment sizeThatFits:CGSizeMake(customCell.txtComment.frame.size.width, MAXFLOAT)];
+            customCell.constraintTextViewHeight.constant = sizeThatFitsTextView.height;
+            
+           
+                  }
         
     return customCell;
 }
@@ -157,6 +207,7 @@
         }
         if ([comments count]!= 0)
         {
+             customCell.selectionStyle = UITableViewCellSelectionStyleNone;
         //comments=(NSMutableArray*)[(NSDictionary*)self.dic valueForKeyPath:@"comments"];
             self.dic=[comments objectAtIndex:indexPath.row-1];
         NSString *str1=[self.dic valueForKey:@"first_name"];
@@ -200,7 +251,19 @@
     NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
     if (networkStatus == NotReachable)
     {
-        [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+        [SVProgressHUD dismiss];
+       // [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+        UIAlertController *alertController;
+        alertController = [UIAlertController  alertControllerWithTitle:@"No internet"  message:@"This feature requires internet connection.please check your internet settings and try again"  preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+        }]];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"settings" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+//            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+            NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+            [[UIApplication sharedApplication] openURL:url];
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
     }
     else {
         
@@ -232,6 +295,50 @@
         
     }
 }
+- (void)hideTransparentVieww{
+    [_transperentview1 removeFromSuperview];
+    self.navigationController.navigationBar.hidden=NO;
+
+}
+
+-(void)ImageZoom:(UITapGestureRecognizer *)sender
+{
+    if(imageUrl!=nil)
+    {
+    NSLog(@"image zoomed");
+    _transperentview1 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame))];
+        self.navigationController.navigationBar.hidden=YES;
+    _transperentview1.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    _transperentview1.backgroundColor=[[UIColor blackColor]colorWithAlphaComponent:0.9];
+    [self.view addSubview:_transperentview1];
+   ImageView =[[UIImageView alloc]initWithFrame:CGRectMake(0, 50,CGRectGetWidth(self.view.frame) , 250)];
+        [ImageView sd_setImageWithURL:imageUrl placeholderImage:[UIImage imageNamed:@"deafult_icon.png"]];
+        [ImageView setContentMode:UIViewContentModeScaleAspectFit];
+        UIButton *back=[[UIButton alloc]initWithFrame:CGRectMake(0, 20, 20, 20)];
+       // back.backgroundColor=[UIColor redColor];
+        [back addTarget:self action:@selector(hideTransparentVieww) forControlEvents:UIControlEventTouchUpInside];
+        [back setBackgroundImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
+        [_transperentview1 addSubview:ImageView];
+
+        
+        scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0,40, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame)+20)];
+        [scrollView addSubview:ImageView];
+      //  scrollView.contentSize = ImageView.bounds.size;
+        [scrollView setContentSize:CGSizeMake(320, CGRectGetHeight(self.view.frame))];
+       // scrollView.backgroundColor=[UIColor blueColor];
+        scrollView.indicatorStyle = UIScrollViewIndicatorStyleWhite;
+        scrollView.minimumZoomScale = 0.9f;
+        scrollView.maximumZoomScale = 3.0f;
+        scrollView.delegate = self;
+        [_transperentview1 addSubview:back];
+
+        [_transperentview1 addSubview:scrollView];
+    }
+}
+- (UIView *) viewForZoomingInScrollView:(UIScrollView *)scrollView {
+    NSLog(@"viewForZoomingInScrollView");
+    return ImageView;
+}
 -(NSString*)stringWithSentenceCapitalization:(NSString*)str
 {
     
@@ -244,9 +351,11 @@
 /*Post_comment*/
 -(void)commentPost
 {
-
+    hide.userInteractionEnabled=NO;
+    Post.enabled=NO;
     if(![textfield.text isEqualToString:@""])
     {
+        
             NSString * mystring =[NSString stringWithFormat:@"user_id=%@&post_id=%@&comment=%@",[[NSUserDefaults standardUserDefaults]valueForKey:@"user_id"],[postdic valueForKey:@"post_id"],textfield.text];
             NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
             [request setURL:[NSURL URLWithString:@"http://facilitymanagementcouncil.com/admin/service/postcomment"]];
@@ -261,6 +370,8 @@
     else
     {
           [self.view makeToast:@"empty comment can't be send" duration:1.0 position:@"bottom"];
+        hide.userInteractionEnabled=YES;
+        Post.enabled=YES;
     }
   
     }
@@ -278,12 +389,15 @@ didReceiveData:(NSData *)data1
         if(commentdic == nil)
         {
             commentdic=json;
+            hide.userInteractionEnabled=YES;
+            Post.enabled=YES;
         }
         else
         {
-            commentdic = [commentdic initWithDictionary:json];
+            NSLog(@"print");
         }
     }
+
     - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
 didCompleteWithError:(nullable NSError *)error
     {
@@ -303,6 +417,11 @@ didCompleteWithError:(nullable NSError *)error
 //        [self.navigationController popViewControllerAnimated:YES];
     }
 
-
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [SVProgressHUD dismiss];
+    
+}
 
 @end

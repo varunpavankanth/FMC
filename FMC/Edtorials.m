@@ -11,6 +11,8 @@
 #import "UIView+Toast.h"
 #import "APIDataFetcher.h"
 #import "UIImageView+WebCache.h"
+#import "SVProgressHUD.h"
+#import "WebViewController.h"
 
 @interface Edtorials ()
 
@@ -33,7 +35,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    [SVProgressHUD show];
     self.view.backgroundColor=[UIColor whiteColor];
     self.navigationItem.title=@"Editorials";
     
@@ -72,7 +74,7 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (responseArray)
-     return cell.contentView.frame.size.height+50;
+     return cell.contentView.frame.size.height;
     else
         return 150;
 }
@@ -94,13 +96,20 @@
         
     NSString *labletext = [NSString stringWithFormat:@"%@ \n\n%@",[self stringWithSentenceCapitalization:[dic valueForKey:@"book_name"]],[dic valueForKey:@"book_description"]];
         NSMutableAttributedString *attributedString=[[NSMutableAttributedString alloc]initWithString:labletext];
+        
        
-        UIImageView *Small_Image=[[UIImageView alloc]initWithFrame:CGRectMake(0, 10, 100, 75)];
+        UIImageView *Small_Image=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 100, 75)];
         [Small_Image sd_setImageWithURL:[NSURL URLWithString:[dic valueForKey:@"Small_Image"]]placeholderImage:[UIImage imageNamed:@"deafult_icon.png"]];
         [cell.contentView addSubview:Small_Image];
+        
+       
+        
+        
         UILabel *Lable=[[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(Small_Image.frame)+5, 0,CGRectGetWidth(self.view.frame)-120,0)];
         Lable.attributedText=attributedString;
         Lable.numberOfLines=0;
+        Lable.font=[UIFont fontWithName:@"Roboto-Regular" size:16];
+        Lable.textColor=[UIColor blackColor];
         [Lable sizeToFit];
         [cell.contentView addSubview:Lable];
         cell.layer.borderWidth=1.0f;
@@ -115,13 +124,21 @@
         CGRect frame=cell.contentView.frame;
         frame.size.height=CGRectGetMaxY(Lable.frame)+10;
         [cell.contentView setFrame:frame];
-        border.frame = CGRectMake(CGRectGetMaxX(Small_Image.frame)+2, 5, 1, CGRectGetHeight(cell.contentView.frame)+45);
+        border.frame = CGRectMake(CGRectGetMaxX(Small_Image.frame)+2, 5, 1, CGRectGetHeight(cell.contentView.frame)-5);
         [cell.contentView.layer addSublayer:border];
+         [Small_Image setCenter:CGPointMake(Small_Image.center.x, cell.contentView.frame.size.height/2)];
+    
         
         //cell.imageView.image=[UIImage imageNamed:[img objectAtIndex:indexPath.row]];
         
     }
     return cell;
+}
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [SVProgressHUD dismiss];
+    
 }
 
 -(NSString*)stringWithSentenceCapitalization:(NSString*)str
@@ -142,14 +159,28 @@
     if(responseArray)
     {
         dic=[responseArray objectAtIndex:indexPath.section];
-        UIWebView *view = [[UIWebView alloc] initWithFrame:CGRectMake(0,50, self.view.frame.size.width,self.view.frame.size.height-40)];
-        NSString *url=[NSString stringWithFormat:@"https://docs.google.com/viewerng/viewer?url=%@",[dic valueForKey:@"book_path"]];
-        NSURL *nsurl=[NSURL URLWithString:url];
-        NSURLRequest *nsrequest=[NSURLRequest requestWithURL:nsurl];
-        [view loadRequest:nsrequest];
-        [self.view addSubview:view];
+        WebViewController *VC=[[WebViewController alloc]init];
+        if (responseArray) {
+            dic=[responseArray objectAtIndex:indexPath.row];
+            VC.strg=[dic valueForKey:@"book_path"];
+        }
+        
+        [self.navigationController pushViewController:VC animated:YES];
+//        [SVProgressHUD show];
+//        dic=[responseArray objectAtIndex:indexPath.section];
+//        UIWebView *view = [[UIWebView alloc] initWithFrame:CGRectMake(0,50, self.view.frame.size.width,self.view.frame.size.height-40)];
+//        view.delegate=self;
+//        NSString *url=[NSString stringWithFormat:@"https://docs.google.com/viewerng/viewer?url=%@",[dic valueForKey:@"book_path"]];
+//        NSURL *nsurl=[NSURL URLWithString:url];
+//        NSURLRequest *nsrequest=[NSURLRequest requestWithURL:nsurl];
+//        [view loadRequest:nsrequest];
+//        [self.view addSubview:view];
         
     }
+}
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    [SVProgressHUD dismiss];
 }
 -(void)EditorialsServercall
 
@@ -158,7 +189,19 @@
     NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
     if (networkStatus == NotReachable)
     {
+        [SVProgressHUD dismiss];
         [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+        UIAlertController *alertController;
+        alertController = [UIAlertController  alertControllerWithTitle:@"No internet"  message:@"This feature requires internet connection.please check your internet settings and try again"  preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+        }]];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"settings" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            //            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+            NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+            [[UIApplication sharedApplication] openURL:url];
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
     }
     else {
         
@@ -170,16 +213,26 @@
              
              if ([result isKindOfClass:[NSDictionary class]])
              {
+                 [SVProgressHUD dismiss];
+
                  responseArray=(NSMutableArray*)[(NSDictionary*)result valueForKeyPath:@"books_details"];
                  
                  [tv reloadData];
+                 
              }
-             
+             else
+             { [SVProgressHUD dismiss];
+
+                 [self.view makeToast:@"Please check network" duration:1.0 position:@"center"];
+             }
          }:^(NSError *error)
          
          {
              if (error)
              {
+                 [SVProgressHUD dismiss];
+                 
+                 [self.view makeToast:@"Please check network" duration:1.0 position:@"center"];
                  NSLog(@"%@", error.localizedDescription);
              }
              

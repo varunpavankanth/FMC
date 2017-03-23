@@ -159,6 +159,8 @@
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardIdentifier bundle: nil];
         ViewController *logout =[storyboard instantiateViewControllerWithIdentifier:@"ViewController"];
          [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"status"];
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"forgotPassword"];
+         [[NSUserDefaults standardUserDefaults] synchronize];
       [self presentViewController:logout animated:YES completion:nil];
     }
    
@@ -185,7 +187,7 @@
         NSURL *url =[NSURL URLWithString:[[NSUserDefaults standardUserDefaults]
                                           stringForKey:@"profile_pic" ]] ;
        //customCell.frame=CGRectMake(0, 0, self.view.frame.size.width,self.view.frame.size.height/2);
-        UIImageView *imgv=[[UIImageView alloc]initWithFrame:CGRectMake(5 , 5, 90,90)];
+        imgv=[[UIImageView alloc]initWithFrame:CGRectMake(5 , 5, 90,90)];
         
         [imgv sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"deafult_icon.png"]];
         imgv.layer.cornerRadius = 45.0f;
@@ -193,7 +195,7 @@
         [customCell addSubview:imgv];
         
         
-        UIImageView *myImage = [[UIImageView alloc] initWithFrame:CGRectMake(CGRectGetMaxX(imgv.frame)-30,CGRectGetMaxY(imgv.frame)-30,40,40 )];
+        UIImageView *myImage = [[UIImageView alloc] initWithFrame:CGRectMake(CGRectGetMaxX(imgv.frame)-30,CGRectGetMaxY(imgv.frame)-30,30,30)];
 
         
         myImage.image = [UIImage imageNamed:@"edit.png"];
@@ -206,19 +208,24 @@
         
         
 
-       UILabel *username=[[UILabel alloc]initWithFrame:CGRectMake(10,CGRectGetMaxY(imgv.frame) ,customCell.frame.size.width ,50 )];
+       username=[[UILabel alloc]initWithFrame:CGRectMake(10,CGRectGetMaxY(imgv.frame) ,customCell.frame.size.width ,50 )];
         NSString *name=[[NSUserDefaults standardUserDefaults]
-                        stringForKey:@"user_name"];
+                        stringForKey:@"first_name"];
+        NSString *lastname=[[NSUserDefaults standardUserDefaults]
+                            stringForKey:@"last_name"];
+        NSString *lastname1=[NSString stringWithFormat:@" %@",lastname];
         NSString *Company=[[NSUserDefaults standardUserDefaults]
                            stringForKey:@"company_name"];
-        NSString *text = [NSString stringWithFormat:@"%@\n%@",[ self stringWithSentenceCapitalization:name] ,[ self stringWithSentenceCapitalization:Company]];
+        NSString *text = [NSString stringWithFormat:@"%@%@\n%@",name ,lastname1,Company];
         NSMutableAttributedString *attributedtext=[[NSMutableAttributedString alloc]initWithString:text];
         NSRange  range=[text rangeOfString:name];
-        UIFont *boldFont = [UIFont fontWithName:@"Roboto-Regular" size:14];
+        UIFont *boldFont = [UIFont fontWithName:@"Roboto-Bold" size:14];
         [attributedtext setAttributes:@{NSForegroundColorAttributeName:[UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0],
                                         NSFontAttributeName:boldFont} range:range];
         [attributedtext setAttributes:@{NSForegroundColorAttributeName:[UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0],
-                                        NSFontAttributeName:[UIFont fontWithName:@"Roboto-Light" size:12]} range:[text rangeOfString:Company]];
+                                        NSFontAttributeName:boldFont} range:[text rangeOfString:lastname1]];
+        [attributedtext setAttributes:@{NSForegroundColorAttributeName:[UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0],
+                                        NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:12]} range:[text rangeOfString:Company]];
         username.attributedText=attributedtext;
         username.numberOfLines=0;
         username.textColor=[UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
@@ -228,13 +235,13 @@
     {
          tableview.rowHeight=tableview.frame.size.height/12;
     customCell.frame=CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height/8);
-        UIImageView *imgv=[[UIImageView alloc]initWithFrame:CGRectMake(5 , 10, 25, 25)];
-        imgv.image=[UIImage imageNamed:[NSString stringWithFormat:@"%@",[imageslist objectAtIndex:indexPath.row]]];
-    UILabel *dataLabel=[[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(imgv.frame)+20,0,self.view.frame.size.width,50)];
+        UIImageView *imgv1=[[UIImageView alloc]initWithFrame:CGRectMake(5 , 10, 25, 25)];
+        imgv1.image=[UIImage imageNamed:[NSString stringWithFormat:@"%@",[imageslist objectAtIndex:indexPath.row]]];
+    UILabel *dataLabel=[[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(imgv1.frame)+20,0,self.view.frame.size.width,50)];
     dataLabel.textColor=[UIColor whiteColor];
     dataLabel.text = [NSString stringWithFormat:@"%@",[itemslist objectAtIndex:indexPath.row]];
         dataLabel.textAlignment=NSTextAlignmentNatural;
-    [customCell addSubview:imgv];
+    [customCell addSubview:imgv1];
         customCell.separatorInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, customCell.frame.size.width+100);
     [customCell addSubview:dataLabel];
    
@@ -242,7 +249,16 @@
     return customCell;
 }
 
+-(void)viewWillAppear:(BOOL)animated
 
+{
+    [super viewWillAppear:animated];
+    //    [imgv sd_setImageWithURL:[NSURL URLWithString:[[NSUserDefaults standardUserDefaults]
+//                                                   stringForKey:@"profile_pic" ]] placeholderImage:[UIImage imageNamed:@"deafult_icon.png"]];
+    [tableview reloadData];
+    
+    
+}
 /*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {

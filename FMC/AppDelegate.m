@@ -8,6 +8,8 @@
 
 #import "AppDelegate.h"
 #import "UIImageView+WebCache.h"
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
 
 @interface AppDelegate ()
 
@@ -17,6 +19,9 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+        [Fabric with:@[[Crashlytics class]]];
+    [self logUser];
+    
     NSString *savedValue = [[NSUserDefaults standardUserDefaults] valueForKey:@"status"];
     NSLog(@"%@",savedValue);
     if ([savedValue isEqualToString:@"success"]) {
@@ -35,6 +40,14 @@
     
     // Override point for customization after application launch.
     return YES;
+}
+
+- (void) logUser {
+    // TODO: Use the current user's information
+    // You can call any combination of these three methods
+    [CrashlyticsKit setUserIdentifier:@"8686410525"];
+    [CrashlyticsKit setUserEmail:@"varunch.versatilemobitech@gmail.com"];
+    [CrashlyticsKit setUserName:@"VARUN PAVAN KANTH"];
 }
 
 

@@ -106,6 +106,7 @@
     cell.textLabel.text=[dic valueForKey:@"history_text"];
     }
     cell.textLabel.numberOfLines = 0;
+    [cell.textLabel sizeToFit];
     
     return cell;
 }

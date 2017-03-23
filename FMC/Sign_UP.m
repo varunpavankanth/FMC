@@ -23,19 +23,22 @@
     [super viewDidLoad];
    
 
- 
+    [SVProgressHUD setForegroundColor:[UIColor blueColor]];
+    [SVProgressHUD setBackgroundColor:[UIColor clearColor]];
     self.view.backgroundColor=[UIColor whiteColor];
     self.navigationController.navigationBar.barTintColor=[UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
      self.navigationController.navigationBar.tintColor=[UIColor whiteColor];
     self.title=@"Sign Up";
      [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
-   UIButton *back=[[UIButton alloc]initWithFrame:CGRectMake(5, 10,20,20)];
-    //[back setTitle:@"<-Back" forState:UIControlStateNormal];
- [back setBackgroundImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
-   
-    [back addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
-    //[self.view addSubview:navbar];
-    [self.navigationController.navigationBar addSubview:back];
+//   UIButton *back=[[UIButton alloc]initWithFrame:CGRectMake(15, 10,25,25)];
+//    //[back setTitle:@"<-Back" forState:UIControlStateNormal];
+// [back setBackgroundImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
+//   
+//    [back addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchDown];
+//    //[self.view addSubview:navbar];
+//    [self.navigationController.navigationBar addSubview:back];
+    UIBarButtonItem *back=[[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"back.png"] style:UIBarButtonItemStylePlain target:self action:@selector(back)];
+    self.navigationItem.leftBarButtonItem = back;
     NSURLSessionConfiguration *sessionConfig=[NSURLSessionConfiguration ephemeralSessionConfiguration];
    self.urlSession= [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:nil];
     scrollView =[[UIScrollView alloc]initWithFrame:CGRectMake(0, 51, self.view.frame.size.width, self.view.frame.size.height)];
@@ -103,7 +106,7 @@
     [scrollView addSubview:bussinessE_id];
     
     personalE_id=[[ACFloatingTextField alloc]init];
-    [personalE_id setTextFieldPlaceholderText:@"Personal e-Mail Id"];
+    [personalE_id setTextFieldPlaceholderText:@"Personal e-Mail Id(User name)"];
     personalE_id.selectedLineColor = [UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
     personalE_id.placeHolderColor = [UIColor grayColor];
     personalE_id.delegate=self;
@@ -348,7 +351,26 @@
     [password resignFirstResponder];
     [confpassword resignFirstResponder];
     [profilepic resignFirstResponder];
-   
+//    if(textField!=confpassword)
+//    {
+//    NSInteger nextTag = textField.tag + 1;
+//    // Try to find next responder
+//    UIResponder* nextResponder = [textField.superview viewWithTag:nextTag];
+//    if (nextResponder) {
+//        // Found next responder, so set it.
+//        [nextResponder becomeFirstResponder];
+//    } else {
+//        // Not found, so remove keyboard.
+//        [textField resignFirstResponder];
+//    }
+//    return NO;
+//    }
+//    else
+//    {
+//        // [textField becomeFirstResponder];
+//         [textField resignFirstResponder];
+//        return NO;
+//    }
 
     return YES;
 }
@@ -379,9 +401,12 @@
     }
     if (textField.tag==11) {
         [profilepic resignFirstResponder];
+        // profilepic.text=@"image uploaded successfully";
         [self takePic:nil];
        }
 }
+
+
 - (void)takePic:(id)sender {
     [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:27/255.0 green:35/255.0 blue:66/255.0 alpha:1.0]];
     
@@ -400,7 +425,7 @@
                                  [self TakePhotoWithCamera];
                              }];
     UIAlertAction* offline = [UIAlertAction
-                              actionWithTitle:@"Photo & Video Library"
+                              actionWithTitle:@"Photo"
                               style:UIAlertActionStyleDefault
                               handler:^(UIAlertAction * action)
                               {
@@ -441,6 +466,7 @@
          imagePicker.delegate=self;
         [imagePicker setAllowsEditing:YES];
         [self presentViewController:imagePicker animated:YES completion:nil];
+        camerabool=YES;
     }
 }
 -(void)TakePhotoWithGallery
@@ -453,38 +479,133 @@
 }
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     NSLog(@"%@",info);
+    [self dismissViewControllerAnimated:false completion:^
+     {
+         UIImage *imgSelected = info[UIImagePickerControllerOriginalImage];
+         imageurl=info[UIImagePickerControllerReferenceURL];
+         extension = [[imageurl pathExtension] lowercaseString];
+         NSLog(@"%@",extension);
+         // [img setImage:nil];
+         [self presentCropViewControllerWithImage:imgSelected];
+     }];
     
-    UIImage *chosenImage = info[UIImagePickerControllerEditedImage];
-   // profilepic = chosenImage;
-    imageurl=info[UIImagePickerControllerReferenceURL];
-    profilepic.text=[NSString stringWithFormat:@"%@",imageurl];
-     extension = [[imageurl pathExtension] lowercaseString];
-   // [extension lowercaseString];
-    NSLog(@"%@",extension);
+    
+//    if(camerabool==YES)
+//    {
+//        UIImage *imgSelected = info[UIImagePickerControllerOriginalImage];
+//        imagedata=UIImageJPEGRepresentation(imgSelected, 1.0);
+//       // [img setImage:imgSelected];
+//        base64string=[imagedata base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+//        extension=@"jpg";
+//        [picker dismissViewControllerAnimated:YES completion:NULL];
+//        camerabool=NO;
+//        [NSTimer scheduledTimerWithTimeInterval:1.0f
+//                                         target:self
+//                                       selector:@selector(profileText)
+//                                       userInfo:nil
+//                                        repeats:YES];
+//    }
+//    else
+//    {
+  //  UIImage *chosenImage = info[UIImagePickerControllerEditedImage];
+    
+   // }
+//    imageurl=info[UIImagePickerControllerReferenceURL];
+//    profilepic.text=[NSString stringWithFormat:@"%@",imageurl];
+//     extension = [[imageurl pathExtension] lowercaseString];
+//   // [extension lowercaseString];
+//    NSLog(@"%@",extension);
+//    CFStringRef imageUTI = (UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,(__bridge CFStringRef)extension , NULL));
+//    NSLog(@"%@",imageUTI);
+//    if (UTTypeConformsTo(imageUTI, kUTTypeJPEG))
+//    {
+//    imagedata=UIImageJPEGRepresentation(chosenImage, 1.0);
+//    base64string=[imagedata base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+//    }
+//    else if (UTTypeConformsTo(imageUTI, kUTTypePNG))
+//    {
+//       imagedata=UIImagePNGRepresentation(chosenImage);
+//    base64string=[imagedata base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+//    }
+//    else
+//    {
+//       // NSLog(@"Unhandled Image UTI: %@", imageUTI);
+//        imagedata=UIImageJPEGRepresentation(chosenImage, 1.0);
+//        base64string=[imagedata base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+//        extension=@"jpg";
+//    }
+//    [picker dismissViewControllerAnimated:YES completion:NULL];
+    
+}
+- (void)presentCropViewControllerWithImage:(UIImage *)imgInput
+{
+    TOCropViewController *vcCropView = [[TOCropViewController alloc] initWithImage:imgInput];
+    [vcCropView setDelegate:self];
+    // Optional customisation.
+    //    [vcCropView setRotateButtonsHidden:true];
+    //    [vcCropView setRotateClockwiseButtonHidden:true];
+    //    [vcCropView setAspectRatioPickerButtonHidden:true];
+    [self presentViewController:vcCropView animated:false completion:nil];
+}
+
+
+- (void)cropViewController:(TOCropViewController *)cropViewController didCropToImage:(UIImage *)image withRect:(CGRect)cropRect angle:(NSInteger)angle
+{
+   // [img setImage:image];
+   // profilepic.text=@"image uploaded successfully";
     CFStringRef imageUTI = (UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,(__bridge CFStringRef)extension , NULL));
     NSLog(@"%@",imageUTI);
+    
     if (UTTypeConformsTo(imageUTI, kUTTypeJPEG))
     {
-    imagedata=UIImageJPEGRepresentation(chosenImage, 1.0);
-    base64string=[imagedata base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+        
+        base64string =[UIImageJPEGRepresentation(image,1.0) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+       // profilepic.text=@"image uploaded successfully";
     }
     else if (UTTypeConformsTo(imageUTI, kUTTypePNG))
     {
-       imagedata=UIImagePNGRepresentation(chosenImage);
-    base64string=[imagedata base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+        
+        base64string =[UIImagePNGRepresentation(image) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+       // profilepic.text=@"image uploaded successfully";
     }
     else
     {
-        NSLog(@"Unhandled Image UTI: %@", imageUTI);
+        // NSLog(@"Unhandled Image UTI: %@", imageUTI);
+        imagedata=UIImageJPEGRepresentation(image, 1.0);
+        base64string=[imagedata base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+        extension=@"jpg";
+        
     }
-    [picker dismissViewControllerAnimated:YES completion:NULL];
+    // [picker dismissViewControllerAnimated:YES completion:NULL];
     
+    [self dismissViewControllerAnimated:true completion:nil];
+    profilepic.text=@"image uploaded successfully";
+            [NSTimer scheduledTimerWithTimeInterval:1.0f
+                                             target:self
+                                           selector:@selector(profileText)
+                                           userInfo:nil
+                                            repeats:YES];
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"forgotPassword"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
 }
+-(void)profileText
+{
+    profilepic.text=@"image uploaded successfully";
+}
+
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
     [picker dismissViewControllerAnimated:YES completion:NULL];
 }
+- (void)cropViewController:(nonnull TOCropViewController *)cropViewController didFinishCancelled:(BOOL)cancelled
+{
+    base64string=nil;
+    extension=nil;
+    profilepic.text=@"";
+        [self dismissViewControllerAnimated:true completion:nil];
 
+    
+}
 
 //- (BOOL)prefersStatusBarHidden
 //{
@@ -597,7 +718,19 @@
     UIAlertController *alertController;
     if (networkStatus == NotReachable)
     {
+        [SVProgressHUD dismiss];
         [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+        UIAlertController *alertController;
+        alertController = [UIAlertController  alertControllerWithTitle:@"No internet"  message:@"This feature requires internet connection.please check your internet settings and try again"  preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+        }]];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"settings" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            //            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+            NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+            [[UIApplication sharedApplication] openURL:url];
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
     }
     else
     {
@@ -606,6 +739,7 @@
             alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please enter first name"  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
+                [firastname becomeFirstResponder];
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
             
@@ -614,6 +748,7 @@
             alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please enter last name"  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
+                 [lastname becomeFirstResponder];
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
             
@@ -622,6 +757,8 @@
             alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please enter Company name"  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
+                [companynm becomeFirstResponder];
+
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
             
@@ -630,6 +767,7 @@
             alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please enter bussiness email id"  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
+                [bussinessE_id becomeFirstResponder];
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
             
@@ -638,6 +776,7 @@
             alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please enter personal email id"  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
+                [personalE_id becomeFirstResponder];
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
             
@@ -646,6 +785,7 @@
             alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please enter Contact number"  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
+                 [contactno becomeFirstResponder];
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
             
@@ -654,14 +794,16 @@
             alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please enter Contact number"  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
+                [contactno becomeFirstResponder];
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
             
         }
         else  if ([alterno.text isEqualToString:@""]) {
-            alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please enter Contact number"  preferredStyle:UIAlertControllerStyleAlert];
+            alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please enter Alternative number"  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
+                [alterno becomeFirstResponder];
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
             
@@ -670,6 +812,8 @@
             alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please enter Password"  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
+                [password becomeFirstResponder];
+
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
             
@@ -678,14 +822,17 @@
             alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please enter Confirm Password"  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
+                [confpassword becomeFirstResponder];
+
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
             
         }
         else  if ([profilepic.text isEqualToString:@""]) {
-            alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please Chosse profile pic"  preferredStyle:UIAlertControllerStyleAlert];
+            alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please choose profile pic"  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
+                [profilepic becomeFirstResponder];
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
             
@@ -694,6 +841,8 @@
             alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Please enter Contact number"  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
+                [profilepic becomeFirstResponder];
+
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
             
@@ -704,6 +853,7 @@
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
             }]];
+            [currenloc becomeFirstResponder];
             [self presentViewController:alertController animated:YES completion:nil];
         }
 
@@ -713,6 +863,7 @@
             alertController = [UIAlertController  alertControllerWithTitle:@"Warning"  message:@"Please Enter Valid Phone Number."  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
+                [contactno becomeFirstResponder];
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
         }
@@ -722,6 +873,8 @@
             alertController = [UIAlertController  alertControllerWithTitle:@"Warning"  message:@"Please Enter Valid Phone Number."  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
+                [alterno becomeFirstResponder];
+
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
         }
@@ -731,6 +884,7 @@
             alertController = [UIAlertController  alertControllerWithTitle:@"Warning"  message:@"Please Enter Valid Email Address."  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [alertController dismissViewControllerAnimated:YES completion:nil];
+                 [bussinessE_id becomeFirstResponder];
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
         }
@@ -742,6 +896,8 @@
                 [alertController dismissViewControllerAnimated:YES completion:nil];
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
+            [personalE_id becomeFirstResponder];
+
         }
         else if(![password.text isEqualToString:confpassword.text])
         {
@@ -751,6 +907,7 @@
                 [alertController dismissViewControllerAnimated:YES completion:nil];
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
+             [confpassword becomeFirstResponder];
             
         }
         else if(![chkBtn isSelected]&![chkBtn1 isSelected]&![chkBtn2 isSelected]&![chkBtn3 isSelected])
@@ -829,11 +986,18 @@ didCompleteWithError:(nullable NSError *)error
     dispatch_async(dispatch_get_main_queue(), ^{[self sucesstask];});
     
 }
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [SVProgressHUD dismiss];
+    
+}
 -(void)sucesstask
 {
     if (!(dic==nil)) {
         [SVProgressHUD dismiss];
-        if ([dic valueForKey:@"status"]==0) {
+        int i=[[dic valueForKey:@"status"]intValue];
+        if (i==0) {
             UIAlertController *alertController;
             alertController = [UIAlertController  alertControllerWithTitle:@"Warning"  message:[dic valueForKey:@"message"]  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
@@ -858,12 +1022,24 @@ didCompleteWithError:(nullable NSError *)error
                 [self dismissViewControllerAnimated:YES completion:nil];
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
+            [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"forgotPassword"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+
            
         }
     }
     else
     {
-        [self sucesstask];
+        [SVProgressHUD dismiss];
+         [self.view makeToast:@"Please check network" duration:1.0 position:@"center"];
+//        UIAlertController *alertController;
+//        alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Some thing went worng"  preferredStyle:UIAlertControllerStyleAlert];
+//        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+//            [alertController dismissViewControllerAnimated:YES completion:nil];
+//            [self dismissViewControllerAnimated:YES completion:nil];
+//        }]];
+//        [self presentViewController:alertController animated:YES completion:nil];
+        
     }
     
     
@@ -876,34 +1052,35 @@ didCompleteWithError:(nullable NSError *)error
 
 
 - (void)chkBtnHandler:(UIButton *)sender {
-    if(sender.tag==1)
-    {
-        [chkBtn setSelected:YES];
-        [chkBtn1 setSelected:NO];
-        [chkBtn2 setSelected:NO];
-        [chkBtn3 setSelected:NO];
-    }
-    else if(sender.tag==2){
-        [chkBtn setSelected:NO];
-        [chkBtn1 setSelected:YES];
-        [chkBtn2 setSelected:NO];
-        [chkBtn3 setSelected:NO];
-        
-    }
-    else if(sender.tag==3){
-        [chkBtn setSelected:NO];
-        [chkBtn1 setSelected:NO];
-        [chkBtn2 setSelected:YES];
-        [chkBtn3 setSelected:NO];
-        
-    }
-    else
-    {
-        [chkBtn setSelected:NO];
-        [chkBtn1 setSelected:NO];
-        [chkBtn2 setSelected:NO];
-        [chkBtn3 setSelected:YES];
-    }
+//    if(sender.tag==1)
+//    {
+//        [chkBtn setSelected:YES];
+//        [chkBtn1 setSelected:NO];
+//        [chkBtn2 setSelected:NO];
+//        [chkBtn3 setSelected:NO];
+//    }
+//    else if(sender.tag==2){
+//        [chkBtn setSelected:NO];
+//        [chkBtn1 setSelected:YES];
+//        [chkBtn2 setSelected:NO];
+//        [chkBtn3 setSelected:NO];
+//        
+//    }
+//    else if(sender.tag==3){
+//        [chkBtn setSelected:NO];
+//        [chkBtn1 setSelected:NO];
+//        [chkBtn2 setSelected:YES];
+//        [chkBtn3 setSelected:NO];
+//        
+//    }
+//    else
+//    {
+//        [chkBtn setSelected:NO];
+//        [chkBtn1 setSelected:NO];
+//        [chkBtn2 setSelected:NO];
+//        [chkBtn3 setSelected:YES];
+//    }
+     [(UIButton *)sender setSelected:![(UIButton *)sender isSelected]];
 
 }
 

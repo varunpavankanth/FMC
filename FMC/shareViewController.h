@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface shareViewController : UIViewController<UITextViewDelegate,UIAlertViewDelegate,NSURLSessionDelegate>
+#import "TOCropViewController.h"
+@interface shareViewController : UIViewController<UITextViewDelegate,UIAlertViewDelegate,NSURLSessionDelegate,TOCropViewControllerDelegate>
 {
     CALayer *border;
     UIButton *cam;
@@ -16,7 +16,9 @@
     UIButton *post;
     UIView   *View;
     CGRect oldframe;
-  
+    NSURL *imageurl;
+    UIImageView *sharPicImageview;
+     BOOL camerabool;
 }
 @property(nonatomic,strong)UIImageView *imageview;
 @property(nonatomic,strong)UITextView *textview;

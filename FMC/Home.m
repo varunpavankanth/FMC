@@ -18,6 +18,7 @@
 {
     NSMutableDictionary *dic;
     NSMutableDictionary *postdic;
+    NSMutableDictionary *likedic;
     NSError *error1;
     NSMutableArray *postdetailsarray;
     NSInteger Sectionpath;
@@ -26,6 +27,7 @@
     int post_like;
     NSUInteger myCount;
     NSInteger imagepath;
+    
 }
 @property  NSURLSession *urlSession;
 
@@ -36,6 +38,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [[SDImageCache sharedImageCache] setValue:nil forKey:@"memCache"];
        [SVProgressHUD setForegroundColor:[UIColor blueColor]];
     [SVProgressHUD setBackgroundColor:[UIColor clearColor]];
      [SVProgressHUD show];
@@ -81,11 +84,14 @@
     if (networkStatus == NotReachable)
     {
         [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+         [tableview.refreshControl endRefreshing];
     }
     else {
     postdetailsarray=nil;
     lastpage=0x00;
+    pageno=1;
     [self servercall];
+    [[[SDWebImageManager sharedManager] imageCache] clearDisk];
     [tableview.refreshControl endRefreshing];
     }
 }
@@ -122,8 +128,18 @@
     if (networkStatus == NotReachable)
     {
           [SVProgressHUD dismiss];
-        [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
-        
+       // [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+        UIAlertController *alertController;
+        alertController = [UIAlertController  alertControllerWithTitle:@"No internet"  message:@"This feature requires internet connection.please check your internet settings and try again"  preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+        }]];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"settings" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            //            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+            NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+            [[UIApplication sharedApplication] openURL:url];
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
     }
     else {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
@@ -155,13 +171,14 @@
                                          else{
                                              NSLog(@"data got nil");
                                               [SVProgressHUD dismiss];
-                                             
-                                            UIAlertController *alertController = [UIAlertController  alertControllerWithTitle:@"Sorry"  message:@"Some thing went worng please refresh after some time"  preferredStyle:UIAlertControllerStyleAlert];
-                                             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-                                                 [alertController dismissViewControllerAnimated:YES completion:nil];
-                                             }]];
-                                             [self presentViewController:alertController animated:YES completion:nil];
+                            [self.view makeToast:@"Please check network" duration:1.0 position:@"center"];
+//                                            UIAlertController *alertController = [UIAlertController  alertControllerWithTitle:@"Sorry"  message:@"Some thing went worng please refresh after some time"  preferredStyle:UIAlertControllerStyleAlert];
+//                                             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+//                                                 [alertController dismissViewControllerAnimated:YES completion:nil];
+//                                             }]];
+//                                             [self presentViewController:alertController animated:YES completion:nil];
                                          }
+                                         
                                                                 }];
                                          
     [dataTask resume];
@@ -228,6 +245,7 @@
       //  customCell=(TableViewCell *)[tableview dequeueReusableCellWithIdentifier:@"cell"];
 //        if (customCell==nil) {
             customCell=[[TableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell"];
+        customCell.selectionStyle = UITableViewCellSelectionStyleNone;
 //        }
         if (indexPath.row==0)
         {
@@ -268,34 +286,41 @@
         if (postdetailsarray) {
               postdic=nil;
         customCell = (TableViewCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
+            customCell.selectionStyle = UITableViewCellSelectionStyleNone;
             postdic=[[NSMutableDictionary alloc]init];
         postdic=[postdetailsarray objectAtIndex:indexPath.section-1];
+            customCell.profileName_label.text=nil;
         NSString *first_name=[postdic valueForKey:@"first_name"];
-          //  NSString *capitalstring_=[self stringWithSentenceCapitalization:first_name];
+//           NSString *first_name1=[self stringWithSentenceCapitalization:first_name];
             if (first_name == (NSString *)[NSNull null])
-                first_name=@"NULL";
-          //  [[first_name substringFromIndex:0] capitalizedString];
-        NSString *last_name=[postdic valueForKey:@"last_name"];
-             [last_name localizedCapitalizedString];
-            if (last_name == (NSString *)[NSNull null])
-                last_name=@"NULL";
-        NSString *company=[postdic valueForKey:@"company_name"];
-            [company localizedCapitalizedString];
-            if (company == (NSString *)[NSNull null])
-                company=@"NULL";
-        NSString *text = [NSString stringWithFormat:@"%@ %@\n%@",[self stringWithSentenceCapitalization:first_name], [self stringWithSentenceCapitalization:last_name],[self stringWithSentenceCapitalization:company]];
-        NSMutableAttributedString *attributedtext=[[NSMutableAttributedString alloc]initWithString:text];
-        NSRange  range=[text rangeOfString:company];
-        NSRange  range1=[text rangeOfString:first_name];
-        NSRange  range2=[text rangeOfString:last_name];
-        UIFont *boldFont = [UIFont fontWithName:@"Roboto-Regular" size:11];
-        [attributedtext setAttributes:@{NSForegroundColorAttributeName: [UIColor darkGrayColor],
-                                        NSFontAttributeName:boldFont} range:range];
-        [attributedtext setAttributes:@{NSForegroundColorAttributeName: [UIColor blackColor],
-                                        NSFontAttributeName:[UIFont fontWithName:@"Roboto-Bold" size:14]} range:range1];
-            [attributedtext setAttributes:@{NSForegroundColorAttributeName: [UIColor blackColor],
-                                            NSFontAttributeName:[UIFont fontWithName:@"Roboto-Bold" size:14]} range:range2];
+                first_name=@"Your name";
+
+            NSString *last_name=[postdic valueForKey:@"last_name"];
+            NSString *last_name1=[NSString stringWithFormat:@" %@",last_name];
+            if (last_name1 == (NSString *)[NSNull null])
+                last_name1=@"last name";
+
             
+        NSString *company=[postdic valueForKey:@"company_name"];
+            
+            if (company == (NSString *)[NSNull null])
+                company=@"I";
+
+        
+        NSString *text = [NSString stringWithFormat:@"%@%@\n%@",first_name,last_name1,company];
+        NSMutableAttributedString *attributedtext=[[NSMutableAttributedString alloc]initWithString:text];
+        NSRange  range=[text rangeOfString:first_name];
+        NSRange  range1=[text rangeOfString:last_name1];
+        NSRange  range2=[text rangeOfString:company];
+                [attributedtext setAttributes:@{NSForegroundColorAttributeName: [UIColor blackColor],
+                                        NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:12]} range:range];
+            [attributedtext setAttributes:@{NSForegroundColorAttributeName: [UIColor blackColor],
+                                            NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:12]} range:range1];
+            UIFont *boldFont = [UIFont fontWithName:@"Roboto-Regular" size:11];
+            [attributedtext setAttributes:@{NSForegroundColorAttributeName: [UIColor darkGrayColor],
+                                            NSFontAttributeName:boldFont} range:range2];
+
+             customCell.profileName_label.attributedText=attributedtext;
 [customCell.profile_imageView sd_setImageWithURL:[NSURL URLWithString:[postdic valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"deafult_icon.png"]];
             if([[postdic allKeys]containsObject:@"post_image"])
             {
@@ -334,15 +359,20 @@
          
             if ([postdic valueForKey:@"recently_liked"])
             {
+                 customCell.linesuparator.hidden=NO;
                 NSString * likeThisString = @"likes this";
-                
-                NSString *RecentString = [NSString stringWithFormat:@"%@ %@",[self stringWithSentenceCapitalization:[postdic valueForKey:@"recently_liked"]], likeThisString];
+                NSString *recentlylike=[postdic valueForKey:@"recently_liked"];
+                NSString *RecentString = [NSString stringWithFormat:@"%@ %@",recentlylike, likeThisString];
                 
                 NSMutableAttributedString *attributedString=[[NSMutableAttributedString alloc]initWithString:RecentString];
                 NSRange  Likerange=[RecentString rangeOfString:likeThisString];
-                //                 UIFont *boldFont = [UIFont fontWithName:@"Roboto-Regular" size:12];
+               // NSRange  RecentStrrange=[RecentString rangeOfString:recentlylike];
                 [attributedString setAttributes:@{NSForegroundColorAttributeName: [UIColor lightGrayColor]} range:Likerange];
+//                [attributedtext setAttributes:@{NSForegroundColorAttributeName: [UIColor blackColor],
+//                                                NSFontAttributeName:[UIFont fontWithName:@"Roboto-Bold" size:11]} range:RecentStrrange];
                 customCell.recentLike_label.attributedText = attributedString;
+                customCell.recentLike_label.font=[UIFont fontWithName:@"Roboto-Regular" size:12];
+    
 //                customCell.recentLike_label.layer.borderWidth=1.0;
 //                customCell.recentLike_label.layer.borderColor=[UIColor lightGrayColor].CGColor;
                 CALayer *border=[CALayer layer];
@@ -360,7 +390,7 @@
                 
             }
             customCell.comentCount_label.text=@"";
-            [customCell.like addTarget:self action:@selector(like:) forControlEvents:UIControlEventTouchUpInside];
+//            [customCell.like addTarget:self action:@selector(like:) forControlEvents:UIControlEventTouchUpInside];
 //            UITapGestureRecognizer *likeAction = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(like:)];
 //            likeAction.numberOfTapsRequired = 1;
 //            likeAction.delegate =self;
@@ -374,11 +404,20 @@
              customCell.sharebuttonlable.userInteractionEnabled = YES;
             [customCell.sharebuttonlable addGestureRecognizer:tapAction1];
            
-            
+            customCell.LikeView.tag=indexPath.section-1;
+            UITapGestureRecognizer *tapAction2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(like:)];
+            tapAction2.numberOfTapsRequired = 1;
+            tapAction2.delegate =self;
+            customCell.LikeView.userInteractionEnabled = YES;
+            [customCell.LikeView addGestureRecognizer:tapAction2];
             customCell.like.tag=indexPath.section-1;
-        customCell.profileName_label.attributedText=attributedtext;
-        customCell.content_label.text=[postdic valueForKey:@"post_text"];
-            customCell.comentCount_label.text=[NSString stringWithFormat:@"%@ likes . %@ Comments",[postdic valueForKey:@"likes_count"],[postdic valueForKey:@"comments_count"]];
+            customCell.content_textview.font=[UIFont fontWithName:@"Roboto-Regular" size:12];
+            customCell.content_textview.textColor=[UIColor blackColor];
+             customCell.content_textview.text=[postdic valueForKey:@"post_text"];
+        CGSize sizeThatFitsTextView = [customCell.content_textview sizeThatFits:CGSizeMake(customCell.content_textview.frame.size.width, MAXFLOAT)];
+            customCell.constraintTextViewHeight.constant = sizeThatFitsTextView.height;
+        customCell.content_label.systemURLStyle = YES;
+        customCell.comentCount_label.text=[NSString stringWithFormat:@"%@ likes . %@ Comments",[postdic valueForKey:@"likes_count"],[postdic valueForKey:@"comments_count"]];
         customCell.content_label.font=[UIFont fontWithName:@"Roboto-Regular" size:12];
         customCell.content_label.textColor=[UIColor blackColor];
         customCell.layer.borderWidth=1.0f;
@@ -392,6 +431,8 @@
    
     
 }
+
+
 -(NSString*)stringWithSentenceCapitalization:(NSString*)str
 {
   
@@ -435,7 +476,12 @@
    }
 }
 
-
+- (NSString *)capitalizeFirstLetterOnlyOfString:(NSString *)string{
+    NSMutableString *result = [string lowercaseString].mutableCopy;
+    [result replaceCharactersInRange:NSMakeRange(0, 1) withString:[[result substringToIndex:1] capitalizedString]];
+    
+    return result;
+}
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ((indexPath.section!=0))
@@ -477,14 +523,35 @@
 }
 
 /*LikePost_Method*/
--(void)like:(UIButton *)button
+-(void)like:(UITapGestureRecognizer*)sender
 {
     
+    
+    Reachability *networkReachability = [Reachability reachabilityForInternetConnection];
+    NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
+    if (networkStatus == NotReachable)
+    {
+        [SVProgressHUD dismiss];
+        [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+        UIAlertController *alertController;
+        alertController = [UIAlertController  alertControllerWithTitle:@"No internet"  message:@"This feature requires internet connection.please check your internet settings and try again"  preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+        }]];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"settings" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            //            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+            NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+            [[UIApplication sharedApplication] openURL:url];
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
+    else{
+     UIView *view = sender.view;
     if (postdetailsarray)
     {
         
-       postdic=[postdetailsarray objectAtIndex:button.tag];
-        Sectionpath=button.tag;
+       postdic=[postdetailsarray objectAtIndex:view.tag];
+        Sectionpath=view.tag;
         NSInteger i=[[postdic valueForKey:@"already_liked"] integerValue];
         if(i==0)
         {
@@ -496,7 +563,7 @@
             [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
             NSLog(@"%@",request);
             NSURLSessionDataTask *dataTask =[self.urlSession dataTaskWithRequest:request];
-            dic=nil;
+           // dic=nil;
             [dataTask resume];
             
         }
@@ -505,6 +572,7 @@
              [self.view makeToast:@"You Alredy like this post" duration:1.0 position:@"bottom"];
         }
     }
+    }
 }
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
@@ -512,14 +580,14 @@
 {
     
     id json = [NSJSONSerialization JSONObjectWithData:data1 options:0 error:nil];
-    
-    if(dic == nil)
+    if(likedic == nil)
     {
-        dic=json;
+        likedic=json;
     }
     else
     {
-        dic = [dic initWithDictionary:json];
+        likedic=nil;
+        likedic = json;
     }
 }
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
@@ -554,7 +622,7 @@ didCompleteWithError:(nullable NSError *)error
        
 //        [tableview endUpdates];
   
-     [self.view makeToast:[dic valueForKey:@"message"] duration:1.0 position:@"bottom"];
+     [self.view makeToast:[likedic valueForKey:@"message"] duration:1.0 position:@"bottom"];
     }
 }
 

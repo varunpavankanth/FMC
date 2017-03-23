@@ -28,5 +28,7 @@
     NSArray *imageslist;
     UITableViewCell *customCell;
     UITableView *tableview;
+    UIImageView *imgv;
+    UILabel *username;
 }
 @end

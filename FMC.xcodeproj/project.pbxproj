@@ -24,8 +24,18 @@
 		44FB31D81E5469500037A69D /* icon180.png in Resources */ = {isa = PBXBuildFile; fileRef = 44FB31D61E5469500037A69D /* icon180.png */; };
 		44FB31D91E5469500037A69D /* icon152.png in Resources */ = {isa = PBXBuildFile; fileRef = 44FB31D71E5469500037A69D /* icon152.png */; };
 		53136068CA578DE65216F4DF /* libPods-FMC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DE4A6BF08FE79BE9FFBC5B6C /* libPods-FMC.a */; };
+		7E0659501E7D045E009706F0 /* TOCropToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E0659481E7D045E009706F0 /* TOCropToolbar.m */; };
+		7E0659511E7D045E009706F0 /* TOCropOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E06594A1E7D045E009706F0 /* TOCropOverlayView.m */; };
+		7E0659521E7D045E009706F0 /* TOCropScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E06594C1E7D045E009706F0 /* TOCropScrollView.m */; };
+		7E0659531E7D045E009706F0 /* TOCropView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E06594F1E7D045E009706F0 /* TOCropView.m */; };
+		7E06595C1E7D0472009706F0 /* TOActivityCroppedImageProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E0659551E7D0472009706F0 /* TOActivityCroppedImageProvider.m */; };
+		7E06595D1E7D0472009706F0 /* TOCroppedImageAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E0659571E7D0472009706F0 /* TOCroppedImageAttributes.m */; };
+		7E06595E1E7D0472009706F0 /* TOCropViewControllerTransitioning.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E0659591E7D0472009706F0 /* TOCropViewControllerTransitioning.m */; };
+		7E06595F1E7D0472009706F0 /* UIImage+CropRotate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E06595B1E7D0472009706F0 /* UIImage+CropRotate.m */; };
+		7E0659631E7D0490009706F0 /* TOCropViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E0659601E7D0490009706F0 /* TOCropViewController.m */; };
 		7E08E31F1E4AFF250009ACC4 /* login_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E08E31E1E4AFF250009ACC4 /* login_background.png */; };
 		7E08E3221E4B226F0009ACC4 /* Sign_UP.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E08E3211E4B226E0009ACC4 /* Sign_UP.m */; };
+		7E134E681E7FA892003861A1 /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E134E671E7FA892003861A1 /* WebViewController.m */; };
 		7E17F5001E5F0B750065FC88 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E17F4FF1E5F0B740065FC88 /* MobileCoreServices.framework */; };
 		7E2286E41E4CDF0100BDAB6A /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E2286E31E4CDF0100BDAB6A /* Photos.framework */; };
 		7E2286E61E4CDF0E00BDAB6A /* PhotosUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E2286E51E4CDF0E00BDAB6A /* PhotosUI.framework */; };
@@ -57,6 +67,11 @@
 		7E7369081E62D7BA000208BD /* APIDataFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E7369071E62D7BA000208BD /* APIDataFetcher.m */; };
 		7E73690C1E62EB9F000208BD /* MembersDircell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E73690B1E62EB9F000208BD /* MembersDircell.m */; };
 		7E73690F1E62ED3D000208BD /* MembersModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E73690E1E62ED3D000208BD /* MembersModel.m */; };
+		7E7C25101E780A4800AC5BC9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E7C250F1E780A4800AC5BC9 /* CoreGraphics.framework */; };
+		7E7C25121E780A5C00AC5BC9 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E7C25111E780A5C00AC5BC9 /* Accelerate.framework */; };
+		7E7C25141E780A8900AC5BC9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E7C25131E780A8900AC5BC9 /* UIKit.framework */; };
+		7E7E3E941E80FFD20062AD65 /* KILabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E7E3E931E80FFD20062AD65 /* KILabel.m */; };
+		7E7E3E961E8111400062AD65 /* splash.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7E7E3E951E8111400062AD65 /* splash.jpg */; };
 		7EA106C11E6D608B0032ECB1 /* icon87.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EA106C01E6D608B0032ECB1 /* icon87.png */; };
 		7EA6644C1E4A3C9C0004E255 /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EA6644B1E4A3C9C0004E255 /* splash.png */; };
 		7EA6644E1E4A3F5D0004E255 /* fmc_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EA6644D1E4A3F5D0004E255 /* fmc_logo.png */; };
@@ -111,9 +126,30 @@
 		44FB31CF1E5469490037A69D /* icon29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon29.png; sourceTree = "<group>"; };
 		44FB31D61E5469500037A69D /* icon180.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon180.png; sourceTree = "<group>"; };
 		44FB31D71E5469500037A69D /* icon152.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon152.png; sourceTree = "<group>"; };
+		7E0659481E7D045E009706F0 /* TOCropToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TOCropToolbar.m; path = TOCropViewController/Views/TOCropToolbar.m; sourceTree = "<group>"; };
+		7E0659491E7D045E009706F0 /* TOCropOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TOCropOverlayView.h; path = TOCropViewController/Views/TOCropOverlayView.h; sourceTree = "<group>"; };
+		7E06594A1E7D045E009706F0 /* TOCropOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TOCropOverlayView.m; path = TOCropViewController/Views/TOCropOverlayView.m; sourceTree = "<group>"; };
+		7E06594B1E7D045E009706F0 /* TOCropScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TOCropScrollView.h; path = TOCropViewController/Views/TOCropScrollView.h; sourceTree = "<group>"; };
+		7E06594C1E7D045E009706F0 /* TOCropScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TOCropScrollView.m; path = TOCropViewController/Views/TOCropScrollView.m; sourceTree = "<group>"; };
+		7E06594D1E7D045E009706F0 /* TOCropToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TOCropToolbar.h; path = TOCropViewController/Views/TOCropToolbar.h; sourceTree = "<group>"; };
+		7E06594E1E7D045E009706F0 /* TOCropView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TOCropView.h; path = TOCropViewController/Views/TOCropView.h; sourceTree = "<group>"; };
+		7E06594F1E7D045E009706F0 /* TOCropView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TOCropView.m; path = TOCropViewController/Views/TOCropView.m; sourceTree = "<group>"; };
+		7E0659541E7D0472009706F0 /* TOActivityCroppedImageProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TOActivityCroppedImageProvider.h; path = TOCropViewController/Models/TOActivityCroppedImageProvider.h; sourceTree = "<group>"; };
+		7E0659551E7D0472009706F0 /* TOActivityCroppedImageProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TOActivityCroppedImageProvider.m; path = TOCropViewController/Models/TOActivityCroppedImageProvider.m; sourceTree = "<group>"; };
+		7E0659561E7D0472009706F0 /* TOCroppedImageAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TOCroppedImageAttributes.h; path = TOCropViewController/Models/TOCroppedImageAttributes.h; sourceTree = "<group>"; };
+		7E0659571E7D0472009706F0 /* TOCroppedImageAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TOCroppedImageAttributes.m; path = TOCropViewController/Models/TOCroppedImageAttributes.m; sourceTree = "<group>"; };
+		7E0659581E7D0472009706F0 /* TOCropViewControllerTransitioning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TOCropViewControllerTransitioning.h; path = TOCropViewController/Models/TOCropViewControllerTransitioning.h; sourceTree = "<group>"; };
+		7E0659591E7D0472009706F0 /* TOCropViewControllerTransitioning.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TOCropViewControllerTransitioning.m; path = TOCropViewController/Models/TOCropViewControllerTransitioning.m; sourceTree = "<group>"; };
+		7E06595A1E7D0472009706F0 /* UIImage+CropRotate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+CropRotate.h"; path = "TOCropViewController/Models/UIImage+CropRotate.h"; sourceTree = "<group>"; };
+		7E06595B1E7D0472009706F0 /* UIImage+CropRotate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+CropRotate.m"; path = "TOCropViewController/Models/UIImage+CropRotate.m"; sourceTree = "<group>"; };
+		7E0659601E7D0490009706F0 /* TOCropViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TOCropViewController.m; path = TOCropViewController/TOCropViewController.m; sourceTree = "<group>"; };
+		7E0659611E7D0490009706F0 /* TOCropViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TOCropViewController.h; path = TOCropViewController/TOCropViewController.h; sourceTree = "<group>"; };
+		7E0659621E7D0490009706F0 /* TOCropViewController-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "TOCropViewController-Bridging-Header.h"; path = "TOCropViewController/TOCropViewController-Bridging-Header.h"; sourceTree = "<group>"; };
 		7E08E31E1E4AFF250009ACC4 /* login_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = login_background.png; sourceTree = "<group>"; };
 		7E08E3201E4B226E0009ACC4 /* Sign_UP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sign_UP.h; sourceTree = "<group>"; };
 		7E08E3211E4B226E0009ACC4 /* Sign_UP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Sign_UP.m; sourceTree = "<group>"; };
+		7E134E661E7FA892003861A1 /* WebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewController.h; sourceTree = "<group>"; };
+		7E134E671E7FA892003861A1 /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
 		7E17F4FF1E5F0B740065FC88 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		7E2286E31E4CDF0100BDAB6A /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		7E2286E51E4CDF0E00BDAB6A /* PhotosUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotosUI.framework; path = System/Library/Frameworks/PhotosUI.framework; sourceTree = SDKROOT; };
@@ -171,6 +207,12 @@
 		7E73690B1E62EB9F000208BD /* MembersDircell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MembersDircell.m; path = FMC/MembersDircell.m; sourceTree = "<group>"; };
 		7E73690D1E62ED3D000208BD /* MembersModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MembersModel.h; path = FMC/MembersModel.h; sourceTree = "<group>"; };
 		7E73690E1E62ED3D000208BD /* MembersModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MembersModel.m; path = FMC/MembersModel.m; sourceTree = "<group>"; };
+		7E7C250F1E780A4800AC5BC9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		7E7C25111E780A5C00AC5BC9 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		7E7C25131E780A8900AC5BC9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		7E7E3E921E80FFD20062AD65 /* KILabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KILabel.h; path = KlLable/KILabel.h; sourceTree = "<group>"; };
+		7E7E3E931E80FFD20062AD65 /* KILabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KILabel.m; path = KlLable/KILabel.m; sourceTree = "<group>"; };
+		7E7E3E951E8111400062AD65 /* splash.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = splash.jpg; sourceTree = "<group>"; };
 		7EA106C01E6D608B0032ECB1 /* icon87.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon87.png; sourceTree = "<group>"; };
 		7EA6644B1E4A3C9C0004E255 /* splash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splash.png; sourceTree = "<group>"; };
 		7EA6644D1E4A3F5D0004E255 /* fmc_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fmc_logo.png; sourceTree = "<group>"; };
@@ -219,6 +261,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E7C25141E780A8900AC5BC9 /* UIKit.framework in Frameworks */,
+				7E7C25121E780A5C00AC5BC9 /* Accelerate.framework in Frameworks */,
+				7E7C25101E780A4800AC5BC9 /* CoreGraphics.framework in Frameworks */,
 				7E7369011E62BBA0000208BD /* QuartzCore.framework in Frameworks */,
 				7E17F5001E5F0B750065FC88 /* MobileCoreServices.framework in Frameworks */,
 				7E2286E61E4CDF0E00BDAB6A /* PhotosUI.framework in Frameworks */,
@@ -242,6 +287,9 @@
 		680D930DAB8E5F3685825D4B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7E7C25131E780A8900AC5BC9 /* UIKit.framework */,
+				7E7C25111E780A5C00AC5BC9 /* Accelerate.framework */,
+				7E7C250F1E780A4800AC5BC9 /* CoreGraphics.framework */,
 				7E7369001E62BBA0000208BD /* QuartzCore.framework */,
 				7E17F4FF1E5F0B740065FC88 /* MobileCoreServices.framework */,
 				7E54D27F1E5A23CF00B87CD5 /* libSVProgressHUD.a */,
@@ -251,6 +299,48 @@
 				DE4A6BF08FE79BE9FFBC5B6C /* libPods-FMC.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7E0659451E7D03CC009706F0 /* TOCropViewController */ = {
+			isa = PBXGroup;
+			children = (
+				7E0659601E7D0490009706F0 /* TOCropViewController.m */,
+				7E0659611E7D0490009706F0 /* TOCropViewController.h */,
+				7E0659621E7D0490009706F0 /* TOCropViewController-Bridging-Header.h */,
+				7E0659471E7D0446009706F0 /* Models */,
+				7E0659461E7D043B009706F0 /* Views */,
+			);
+			name = TOCropViewController;
+			sourceTree = "<group>";
+		};
+		7E0659461E7D043B009706F0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				7E0659481E7D045E009706F0 /* TOCropToolbar.m */,
+				7E0659491E7D045E009706F0 /* TOCropOverlayView.h */,
+				7E06594A1E7D045E009706F0 /* TOCropOverlayView.m */,
+				7E06594B1E7D045E009706F0 /* TOCropScrollView.h */,
+				7E06594C1E7D045E009706F0 /* TOCropScrollView.m */,
+				7E06594D1E7D045E009706F0 /* TOCropToolbar.h */,
+				7E06594E1E7D045E009706F0 /* TOCropView.h */,
+				7E06594F1E7D045E009706F0 /* TOCropView.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		7E0659471E7D0446009706F0 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				7E0659541E7D0472009706F0 /* TOActivityCroppedImageProvider.h */,
+				7E0659551E7D0472009706F0 /* TOActivityCroppedImageProvider.m */,
+				7E0659561E7D0472009706F0 /* TOCroppedImageAttributes.h */,
+				7E0659571E7D0472009706F0 /* TOCroppedImageAttributes.m */,
+				7E0659581E7D0472009706F0 /* TOCropViewControllerTransitioning.h */,
+				7E0659591E7D0472009706F0 /* TOCropViewControllerTransitioning.m */,
+				7E06595A1E7D0472009706F0 /* UIImage+CropRotate.h */,
+				7E06595B1E7D0472009706F0 /* UIImage+CropRotate.m */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 		7E3885651E4C2D0600BA467A /* SWRevealViewController */ = {
@@ -284,6 +374,15 @@
 			name = membersdir;
 			sourceTree = "<group>";
 		};
+		7E7E3E911E80FF880062AD65 /* KlLable */ = {
+			isa = PBXGroup;
+			children = (
+				7E7E3E921E80FFD20062AD65 /* KILabel.h */,
+				7E7E3E931E80FFD20062AD65 /* KILabel.m */,
+			);
+			name = KlLable;
+			sourceTree = "<group>";
+		};
 		7EB233961E5D76AE000A1D60 /* font */ = {
 			isa = PBXGroup;
 			children = (
@@ -307,6 +406,8 @@
 		7EC61F7B1E49984D0092F715 = {
 			isa = PBXGroup;
 			children = (
+				7E7E3E911E80FF880062AD65 /* KlLable */,
+				7E0659451E7D03CC009706F0 /* TOCropViewController */,
 				7E7369091E62EB61000208BD /* membersdir */,
 				7E7369051E62D794000208BD /* API */,
 				7EB233961E5D76AE000A1D60 /* font */,
@@ -331,9 +432,11 @@
 				7EB233B11E5DEA0B000A1D60 /* FMC.entitlements */,
 				7E3885651E4C2D0600BA467A /* SWRevealViewController */,
 				7E54D2711E59CCA400B87CD5 /* Reachability.h */,
+				7E54D2721E59CCA400B87CD5 /* Reachability.m */,
 				7E55215E1E6D753E00F292BD /* CollectionReusableView.h */,
 				7E55215F1E6D753E00F292BD /* CollectionReusableView.m */,
-				7E54D2721E59CCA400B87CD5 /* Reachability.m */,
+				7E134E661E7FA892003861A1 /* WebViewController.h */,
+				7E134E671E7FA892003861A1 /* WebViewController.m */,
 				7E54D2791E59D5FA00B87CD5 /* UIView+Toast.h */,
 				7E54D27A1E59D5FB00B87CD5 /* UIView+Toast.m */,
 				7E2D587E1E4D762F00BDE1A8 /* Awards.h */,
@@ -403,6 +506,7 @@
 		7EC61F871E49984D0092F715 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				7E7E3E951E8111400062AD65 /* splash.jpg */,
 				7ECAC5B11E66FAB8001D6C3B /* icon_delete.png */,
 				7EFFADAB1E6EAC830071C6E9 /* background.png */,
 				7E52353D1E657417008092D8 /* pdf_image.png */,
@@ -443,6 +547,7 @@
 				7EC61F821E49984D0092F715 /* Resources */,
 				E958C58B979609DA4A653A26 /* [CP] Embed Pods Frameworks */,
 				8091478CD640F73F94EE8267 /* [CP] Copy Pods Resources */,
+				7E7E3E901E80F2380062AD65 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -504,6 +609,7 @@
 				7EE71B441E5055840064BF71 /* cric.jpeg in Resources */,
 				7EB233AE1E5D79FA000A1D60 /* Roboto-Regular.ttf in Resources */,
 				7E2286E81E4CE3BA00BDAB6A /* home_post_forward.png in Resources */,
+				7E7E3E961E8111400062AD65 /* splash.jpg in Resources */,
 				44FB31D01E5469490037A69D /* icon120.png in Resources */,
 				7EB233A81E5D79FA000A1D60 /* Roboto-BoldItalic.ttf in Resources */,
 				7EB233AD1E5D79FA000A1D60 /* Roboto-MediumItalic.ttf in Resources */,
@@ -545,6 +651,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		7E7E3E901E80F2380062AD65 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\" 790efe5bed9a9f13d9923daec1bd807ee1b2c471 09830136f65a0f3d754f515d07f7d8d883bab4fa1ab22c3621f40d28a0487080";
+		};
 		8091478CD640F73F94EE8267 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -598,35 +717,46 @@
 			buildActionMask = 2147483647;
 			files = (
 				7E7369081E62D7BA000208BD /* APIDataFetcher.m in Sources */,
+				7E0659531E7D045E009706F0 /* TOCropView.m in Sources */,
 				7E2D587A1E4D75AC00BDE1A8 /* MemberDir.m in Sources */,
 				7E3885711E4C46CB00BA467A /* Menu.m in Sources */,
+				7E06595C1E7D0472009706F0 /* TOActivityCroppedImageProvider.m in Sources */,
 				44CD79C91E570078009C914F /* Home.m in Sources */,
 				7E3885681E4C2D3400BA467A /* SWRevealViewController.m in Sources */,
 				7E2CE3161E5FDFB0002846CA /* EditViewController.m in Sources */,
 				7E54D2731E59CCA400B87CD5 /* Reachability.m in Sources */,
 				44CD79C31E56F727009C914F /* AwardsinforViewController.m in Sources */,
+				7E06595F1E7D0472009706F0 /* UIImage+CropRotate.m in Sources */,
 				7E2D58771E4D754300BDE1A8 /* History.m in Sources */,
 				7E2D58831E4D765E00BDE1A8 /* Gallery.m in Sources */,
 				7E54D27B1E59D5FB00B87CD5 /* UIView+Toast.m in Sources */,
 				7E2D58861E4D768300BDE1A8 /* Events.m in Sources */,
 				7EC61F8F1E49984D0092F715 /* ViewController.m in Sources */,
 				7EF401E41E5CC0010081EC81 /* PostsCell.m in Sources */,
+				7E0659521E7D045E009706F0 /* TOCropScrollView.m in Sources */,
 				7EC61FA21E49DC890092F715 /* ACFloatingTextField.m in Sources */,
+				7E7E3E941E80FFD20062AD65 /* KILabel.m in Sources */,
+				7E134E681E7FA892003861A1 /* WebViewController.m in Sources */,
 				7E3064171E55776E00B3A3DF /* TableViewCell.m in Sources */,
 				7EC61F8C1E49984D0092F715 /* AppDelegate.m in Sources */,
 				7E73690C1E62EB9F000208BD /* MembersDircell.m in Sources */,
+				7E06595E1E7D0472009706F0 /* TOCropViewControllerTransitioning.m in Sources */,
 				7E5235441E65B6B3008092D8 /* CSRViewController.m in Sources */,
 				7E2D58741E4D750E00BDE1A8 /* Welcome.m in Sources */,
 				7EF401E11E5CBFDA0081EC81 /* CommentsCell.m in Sources */,
 				7E73690F1E62ED3D000208BD /* MembersModel.m in Sources */,
 				7E5235431E65B6B3008092D8 /* CSRcellViewController.m in Sources */,
 				7E2D587D1E4D75FE00BDE1A8 /* BusinessEnablers.m in Sources */,
+				7E0659511E7D045E009706F0 /* TOCropOverlayView.m in Sources */,
 				7E2D588F1E4D772D00BDE1A8 /* ChangePassword.m in Sources */,
 				7E08E3221E4B226F0009ACC4 /* Sign_UP.m in Sources */,
 				7E3295971E642E3C0001D8AC /* photoZoom.m in Sources */,
 				7E2D58891E4D76C900BDE1A8 /* Edtorials.m in Sources */,
 				7E2D58801E4D762F00BDE1A8 /* Awards.m in Sources */,
+				7E0659631E7D0490009706F0 /* TOCropViewController.m in Sources */,
+				7E06595D1E7D0472009706F0 /* TOCroppedImageAttributes.m in Sources */,
 				7E5521601E6D753F00F292BD /* CollectionReusableView.m in Sources */,
+				7E0659501E7D045E009706F0 /* TOCropToolbar.m in Sources */,
 				44CD79C61E570053009C914F /* shareViewController.m in Sources */,
 				7EC61F891E49984D0092F715 /* main.m in Sources */,
 				44FB31C51E541B7B0037A69D /* GalleryCollectionViewController.m in Sources */,
@@ -750,19 +880,20 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 068690033667BFE4FAF92D90 /* Pods-FMC.debug.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_ENTITLEMENTS = FMC/FMC.entitlements;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = LH5B6473K4;
+				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = FMC/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/build/Debug-iphoneos/SVProgressHUD",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.versatilemobitech.FMCouncil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
 			name = Debug;
 		};
@@ -770,8 +901,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FE09A918301FCE5069BAAA2A /* Pods-FMC.release.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_ENTITLEMENTS = FMC/FMC.entitlements;
 				DEVELOPMENT_TEAM = LH5B6473K4;
+				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = FMC/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -782,7 +915,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.versatilemobitech.FMCouncil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
 			name = Release;
 		};

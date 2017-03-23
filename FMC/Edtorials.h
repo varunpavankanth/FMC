@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "SWRevealViewController.h"
 #import "Home.h"
-@interface Edtorials : UIViewController<UITableViewDataSource,UITableViewDelegate>
+@interface Edtorials : UIViewController<UITableViewDataSource,UITableViewDelegate,UIWebViewDelegate>
 {
     UITableViewCell * cell;
 }

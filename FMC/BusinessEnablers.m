@@ -108,27 +108,32 @@
         
       NSMutableArray *arr   =(NSMutableArray*)[(NSDictionary*)dic valueForKeyPath:@"partners"];
          subdic=[arr objectAtIndex:indexPath.row];
-    CGFloat width = 150;
-    CGFloat height1=150;
         //(CGRectGetWidth(cell.frame)-width)/2
-    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake((CGRectGetWidth(cell.frame)-width)/2, 15, width, height1)];
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 15, cell.frame.size.width, cell.frame.size.height/2)];
         [imageView sd_setImageWithURL:[NSURL URLWithString:[subdic objectForKey:@"partner_logo"]] placeholderImage:[UIImage imageNamed:@"deafult_icon.png"]];
-     imageView.layer.cornerRadius = width/2;
-        imageView.backgroundColor=[UIColor blueColor];
-    [cell.contentView addSubview:imageView];
-    CGFloat height = 30;
+   //  imageView.layer.cornerRadius = width/2;
+        [cell.contentView addSubview:imageView];
     UIButton *button = [UIButton  buttonWithType:UIButtonTypeSystem];
-    button.frame = CGRectMake(CGRectGetMinX(imageView.frame), CGRectGetHeight(cell.frame) - height+5, 150, height+10);
+    button.frame = CGRectMake( CGRectGetMinX(cell.frame)-5, CGRectGetMaxY(cell.frame)-60, CGRectGetMaxX(cell.frame)-5,30);
     [button setBackgroundImage:[UIImage imageNamed:@"labelImage"] forState:UIControlStateNormal];
     [button setTitle:[self stringWithSentenceCapitalization:[subdic valueForKey:@"partner_name"]] forState:UIControlStateNormal];
      
           button.titleLabel.font = [UIFont systemFontOfSize:12.0];
     button.titleLabel.numberOfLines=0;
     [button setTintColor:[UIColor whiteColor]];
+        cell.layer.borderWidth=1.0;
+        cell.layer.cornerRadius=5.0;
+        cell.layer.borderColor=[UIColor lightGrayColor].CGColor;
     [cell.contentView addSubview:button];
     }
     
     return cell;
+}
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [SVProgressHUD dismiss];
+    
 }
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
@@ -139,7 +144,7 @@
             dic=[responseArray objectAtIndex:indexPath.section];
         UILabel *lable = [[UILabel alloc] init];
         lable.text=[dic valueForKey:@"category_name"];
-        CGFloat width = 80;
+        CGFloat width = self.view.frame.size.width;
         CGFloat height=20;
         
         lable.frame = CGRectMake(10,0, width, height);
@@ -159,14 +164,14 @@
 
 
 - (UIEdgeInsets)collectionView:(UICollectionView*)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    return UIEdgeInsetsMake(0, 20, 30, 30); // top, left, bottom, right
+    return UIEdgeInsetsMake(10, 10, 30, 10); // top, left, bottom, right
 }
 
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath{
     CGFloat width=(self.view.frame.size.width-2 - 2*padding);
     NSLog(@"%f",width);
-    return  CGSizeMake((self.view.frame.size.width)/3, 160);
+    return  CGSizeMake((self.view.frame.size.width-20), 160);
 }
 
 

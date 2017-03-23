@@ -10,8 +10,12 @@
 #import <Photos/Photos.h>
 #import <PhotosUI/PhotosUI.h>
 #import "ACFloatingTextField.h"
+#import "TOCropViewController.h"
+//#import "FXBlurView.h"
+//#import "ImageCropView.h"
 
-@interface Sign_UP : UIViewController<UINavigationControllerDelegate,UIScrollViewDelegate,UITextFieldDelegate,UIImagePickerControllerDelegate,NSURLSessionDelegate>
+@interface Sign_UP : UIViewController<UINavigationControllerDelegate,UIScrollViewDelegate,UITextFieldDelegate,UIImagePickerControllerDelegate,NSURLSessionDelegate,TOCropViewControllerDelegate>
+//ImageCropViewControllerDelegate>
 {
     ACFloatingTextField *firastname,*lastname,*companynm,*bussinessE_id,*personalE_id,*contactno,*alterno,*currenloc,*password,*confpassword,*profilepic;
     UILabel * intrestedlocation;
@@ -28,6 +32,7 @@
     NSError *error1;
     UIButton* chkBtn,*chkBtn1,*chkBtn2,*chkBtn3,*signupbtn;
     float y,h;
+    BOOL camerabool;
 }
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) NSURLSession *urlSession;

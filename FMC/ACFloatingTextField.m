@@ -50,11 +50,11 @@
 #pragma mark :- Drawing Text Rect
 //changed
 - (CGRect)textRectForBounds:(CGRect)bounds {
-    return CGRectMake(30, 4, bounds.size.width, bounds.size.height);
+    return CGRectMake(40, 4, bounds.size.width, bounds.size.height);
 }
 
 - (CGRect)editingRectForBounds:(CGRect)bounds {
-    return CGRectMake(30, 4, bounds.size.width, bounds.size.height);
+    return CGRectMake(40, 4, bounds.size.width, bounds.size.height);
 }
 
 #pragma mark:- Override Set text
@@ -133,7 +133,7 @@
     
     NSString *placeHolderText = _labelPlaceholder.text;
     //changed
-    _labelPlaceholder = [[UILabel alloc]initWithFrame:CGRectMake(30, 0, self.frame.size.width-5, CGRectGetHeight(self.frame))];
+    _labelPlaceholder = [[UILabel alloc]initWithFrame:CGRectMake(40, 0, self.frame.size.width-5, CGRectGetHeight(self.frame))];
     _labelPlaceholder.text = placeHolderText;
     _labelPlaceholder.textAlignment = self.textAlignment;
     _labelPlaceholder.textColor = _placeHolderColor;
@@ -267,7 +267,7 @@
     }
     
     //changed
-    CGRect frame = CGRectMake(30, 0, self.frame.size.width-5, self.frame.size.height);
+    CGRect frame = CGRectMake(40, 0, self.frame.size.width-5, self.frame.size.height);
     CGRect bottmLineFrame = bottomLineView.frame;
     bottmLineFrame.origin.y = CGRectGetHeight(self.frame)-1;
     [UIView animateWithDuration:0.2 animations:^{

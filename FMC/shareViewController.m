@@ -11,6 +11,7 @@
 #import "UIView+Toast.h"
 #import "UIImageView+WebCache.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import "SVProgressHUD.h"
 
 @interface shareViewController ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate,UIAlertViewDelegate,UITextViewDelegate,UIDocumentPickerDelegate>
 {
@@ -65,14 +66,14 @@
     border.frame=CGRectMake(0, 0,CGRectGetMaxX(View.frame), 1);
     [View.layer addSublayer:border];
     cam=[[UIButton alloc]init];
-    cam.frame=CGRectMake(15, CGRectGetMinY(border.frame)+10,20,20);
+    cam.frame=CGRectMake(15, CGRectGetMinY(border.frame)+10,25,25);
     [cam setBackgroundImage:[UIImage imageNamed:@"home_camera.png"] forState:UIControlStateNormal];
     [cam addTarget:self action:@selector(CameraButtonClicked) forControlEvents:UIControlEventTouchUpInside];
 
     [View addSubview:cam];
     link=[[UIButton alloc]init];
     [link setBackgroundImage:[UIImage imageNamed:@"home_link.png"] forState:UIControlStateNormal];
-    link.frame=CGRectMake(CGRectGetMaxX(cam.frame)+15, CGRectGetMinY(border.frame)+10,20 ,20);
+    link.frame=CGRectMake(CGRectGetMaxX(cam.frame)+20, CGRectGetMinY(border.frame)+10,25 ,25);
     [View addSubview:link];
     [link addTarget:self action:@selector(DoccumentButtonClicked) forControlEvents:UIControlEventTouchUpInside];
 
@@ -80,7 +81,7 @@
     [post setBackgroundImage:[UIImage imageNamed:@"home_post.png"] forState:UIControlStateNormal];
     [post setTitle:@"Post" forState:UIControlStateNormal];
     [post addTarget:self action:@selector(PostServerCall) forControlEvents:UIControlEventTouchUpInside];
-    post.frame=CGRectMake(CGRectGetMaxX(border.frame)-60, CGRectGetMinY(border.frame)+10,50 , 30);
+    post.frame=CGRectMake(CGRectGetMaxX(border.frame)-70, CGRectGetMinY(border.frame)+10,60 , 30);
     [View addSubview:post];
     [self.view addSubview:View];
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
@@ -116,6 +117,9 @@
 -(void)deleteButtonClicked{
     
     PostedfileView.hidden = YES;
+    [sharPicImageview removeFromSuperview];
+    base64string=nil;
+    extensionType=nil;
     
 }
 -(void)CameraButtonClicked{
@@ -175,6 +179,7 @@
     imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
     [imagePicker setAllowsEditing:YES];
     [self presentViewController:imagePicker animated:YES completion:nil];
+    camerabool=YES;
     }
 }
 -(void)TakePhotoWithGallery
@@ -232,32 +237,118 @@
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-     dispatch_async(dispatch_get_main_queue(), ^{
-    cameraImage = info[UIImagePickerControllerEditedImage];
-       NSURL *imageurl=info[UIImagePickerControllerReferenceURL];
+    
+    if(camerabool==YES)
+    {
+        UIImage *imgSelected = info[UIImagePickerControllerOriginalImage];
+      //  imagedata=UIImageJPEGRepresentation(imgSelected, 1.0);
+        // [img setImage:imgSelected];
+        PostedfileView.hidden = NO;
+        Postlabel.text=@"image uploaded successfully";
+        base64string =[UIImageJPEGRepresentation(imgSelected,1.0) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+        extensionType=@"jpg";
+        sharPicImageview=[[UIImageView alloc]initWithFrame:CGRectMake(20, CGRectGetMaxY(PostedfileView.frame), self.view.frame.size.width-30,200 )];
+        sharPicImageview.image=imgSelected;
+        [self.view addSubview:sharPicImageview];
+        [picker dismissViewControllerAnimated:YES completion:NULL];
+        camerabool=NO;
+    }
+    else
+    {
+    [self dismissViewControllerAnimated:false completion:^
+     {
+         UIImage *imgSelected = info[UIImagePickerControllerOriginalImage];
          imageurl=info[UIImagePickerControllerReferenceURL];
          extensionType = [[imageurl pathExtension] lowercaseString];
-          PostedfileView.hidden = NO;
-         Postlabel.text=[NSString stringWithFormat:@"%@",imageurl];
-         CFStringRef imageUTI = (UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,(__bridge CFStringRef)extensionType , NULL));
-         NSLog(@"%@",imageUTI);
-         if (UTTypeConformsTo(imageUTI, kUTTypeJPEG))
-         {
-             postDocumentData=UIImageJPEGRepresentation(cameraImage, 1.0);
-             base64string=[postDocumentData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
-         }
-         else if (UTTypeConformsTo(imageUTI, kUTTypePNG))
-         {
-             postDocumentData=UIImagePNGRepresentation(cameraImage);
-             base64string=[postDocumentData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
-         }
-         else
-         {
-             NSLog(@"Unhandled Image UTI: %@", imageUTI);
-         }
-         [picker dismissViewControllerAnimated:YES completion:NULL];
-
-    });
+         NSLog(@"%@",extensionType);
+        // [img setImage:nil];
+         [self presentCropViewControllerWithImage:imgSelected];
+     }];
+    }
+//     dispatch_async(dispatch_get_main_queue(), ^{
+//    cameraImage = info[UIImagePickerControllerEditedImage];
+//       NSURL *imageurl=info[UIImagePickerControllerReferenceURL];
+//         imageurl=info[UIImagePickerControllerReferenceURL];
+//         extensionType = [[imageurl pathExtension] lowercaseString];
+//          PostedfileView.hidden = NO;
+//         Postlabel.text=[NSString stringWithFormat:@"%@",imageurl];
+//         CFStringRef imageUTI = (UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,(__bridge CFStringRef)extensionType , NULL));
+//         NSLog(@"%@",imageUTI);
+//         if (UTTypeConformsTo(imageUTI, kUTTypeJPEG))
+//         {
+//             postDocumentData=UIImageJPEGRepresentation(cameraImage, 1.0);
+//             base64string=[postDocumentData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+//         }
+//         else if (UTTypeConformsTo(imageUTI, kUTTypePNG))
+//         {
+//             postDocumentData=UIImagePNGRepresentation(cameraImage);
+//             base64string=[postDocumentData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+//         }
+//         else
+//         {
+//             NSLog(@"Unhandled Image UTI: %@", imageUTI);
+//         }
+//         
+//         [picker dismissViewControllerAnimated:YES completion:NULL];
+//
+//    });
+}
+- (void)presentCropViewControllerWithImage:(UIImage *)imgInput
+{
+    TOCropViewController *vcCropView = [[TOCropViewController alloc] initWithImage:imgInput];
+    [vcCropView setDelegate:self];
+    // Optional customisation.
+    //    [vcCropView setRotateButtonsHidden:true];
+    //    [vcCropView setRotateClockwiseButtonHidden:true];
+    //    [vcCropView setAspectRatioPickerButtonHidden:true];
+    [self presentViewController:vcCropView animated:false completion:nil];
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+      View.frame=CGRectMake(0, CGRectGetMaxY(self.view.frame)-50,CGRectGetMaxX(self.view.frame), 50);
+}
+- (void)cropViewController:(TOCropViewController *)cropViewController didCropToImage:(UIImage *)image withRect:(CGRect)cropRect angle:(NSInteger)angle
+{
+   // [img setImage:image];
+    PostedfileView.hidden = NO;
+    Postlabel.text=@"image uploaded successfully";
+    CFStringRef imageUTI = (UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,(__bridge CFStringRef)extensionType , NULL));
+    NSLog(@"%@",imageUTI);
+    
+    if (UTTypeConformsTo(imageUTI, kUTTypeJPEG))
+    {
+        base64string =[UIImageJPEGRepresentation(image,1.0) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    }
+    else if (UTTypeConformsTo(imageUTI, kUTTypePNG))
+    {
+        
+        base64string =[UIImagePNGRepresentation(image) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    }
+    else
+    {
+         base64string =[UIImagePNGRepresentation(image) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+        extensionType=@"jpg";
+        NSLog(@"Unhandled Image UTI: %@", imageUTI);
+    }
+    // [picker dismissViewControllerAnimated:YES completion:NULL];
+    sharPicImageview=[[UIImageView alloc]initWithFrame:CGRectMake(20, CGRectGetMaxY(PostedfileView.frame), self.view.frame.size.width-30,200 )];
+    sharPicImageview.image=image;
+    [self.view addSubview:sharPicImageview];
+    
+    [self dismissViewControllerAnimated:true completion:nil];
+}
+- (void)cropViewController:(nonnull TOCropViewController *)cropViewController didFinishCancelled:(BOOL)cancelled
+{
+//    if(img.image==nil)
+//    {
+//        [img sd_setImageWithURL:[NSURL URLWithString:[[NSUserDefaults standardUserDefaults] valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"deafult_icon.png"]];
+    sharPicImageview.image=nil;
+    base64string=nil;
+    extensionType=nil;
+        [self dismissViewControllerAnimated:true completion:nil];
+//    }
+    
 }
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
@@ -329,7 +420,9 @@
     CGRect frame = PostedfileView.frame;
    frame.origin.y = _textview.frame.origin.y+_textview.frame.size.height+10;
     [PostedfileView setFrame:frame];
-    
+    CGRect Sharepicframe=sharPicImageview.frame;
+    Sharepicframe.origin.y=CGRectGetMaxY(PostedfileView.frame)+5;
+    [sharPicImageview setFrame:Sharepicframe];
     
 }
 
@@ -342,7 +435,9 @@
 /*Server_call*/
 -(void)PostServerCall
 {
-    
+    [SVProgressHUD show];
+
+    post.enabled=NO;
     NSArray *objects;
     NSArray *keys;
     NSString *poststring;
@@ -362,31 +457,42 @@
             extension=@"doc_extension";
             
         }
+        if([_textview.text isEqualToString:@"Share an artical,Photo or idea"])
+        {
+            _textview.text=@"";
+        }
       
         objects = [NSArray arrayWithObjects:[[NSUserDefaults standardUserDefaults] valueForKey:@"user_id"] ,_textview.text,base64string,extensionType,nil];
     keys = [NSArray arrayWithObjects:@"user_id",@"post_text",poststring,extension,nil];
     }
     else
     {
-        
+        if([_textview.text isEqualToString:@"Share an artical,Photo or idea"])
+        {
+            _textview.text=@"";
+        }
         objects = [NSArray arrayWithObjects: [[NSUserDefaults standardUserDefaults] valueForKey:@"user_id"] ,_textview.text,nil];
         keys = [NSArray arrayWithObjects:@"user_id",@"post_text",nil];
     }
-    if(!(extension) &![_textview.text isEqualToString:@"Share an artical,Photo or idea"]||![_textview.text isEqualToString:@""])
+    if(!(extension) && ([_textview.text isEqualToString:@""] ||[_textview.text isEqualToString:@"Share an artical,Photo or idea"] ))
     {
-    NSDictionary *jsonDict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
-    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:jsonDict options:0 error:nil];
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    [request setURL:[NSURL URLWithString:@"http://facilitymanagementcouncil.com/admin/service/savepost"]];
-    request.HTTPBody = jsonData;
-    [request setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    [request setHTTPMethod:@"POST"];
-    NSURLSessionDataTask *dataTask =[self.urlSession dataTaskWithRequest:request];
-    dic=nil;
-    [dataTask resume];
+     [self.view makeToast:@"empty post can't be shared" duration:1.0 position:@"bottom"];
+        post.enabled=YES;
+        [SVProgressHUD dismiss];
     }
     else{
-        [self.view makeToast:@"empty post can't be shared" duration:1.0 position:@"bottom"];
+       
+        NSDictionary *jsonDict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
+        NSData* jsonData = [NSJSONSerialization dataWithJSONObject:jsonDict options:0 error:nil];
+        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+        [request setURL:[NSURL URLWithString:@"http://facilitymanagementcouncil.com/admin/service/savepost"]];
+        request.HTTPBody = jsonData;
+        [request setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+        [request setHTTPMethod:@"POST"];
+        NSURLSessionDataTask *dataTask =[self.urlSession dataTaskWithRequest:request];
+        dic=nil;
+        [dataTask resume];
+       // post.enabled=YES;
     }
 }
 
@@ -398,12 +504,16 @@
     
     if(dic == nil)
     {
+        [SVProgressHUD dismiss];
         dic=json;
         NSLog(@"%@",dic);
+        post.enabled=YES;
+        
     }
     else
     {
-        dic = [dic initWithDictionary:json];
+       // dic = [dic initWithDictionary:json];
+        NSLog(@"second time");
     }
 }
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
@@ -414,17 +524,39 @@ didCompleteWithError:(nullable NSError *)error
     dispatch_async(dispatch_get_main_queue(), ^{[self sucesstask];});
     
 }
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [SVProgressHUD dismiss];
+    
+}
 -(void)sucesstask
 {
     View.frame=CGRectMake(0, CGRectGetMaxY(self.view.frame)-50,CGRectGetMaxX(self.view.frame), 50);
     NSLog(@"%f",View.frame.origin.y);
     [View setFrame:View.frame];
     UIAlertController *alertController;
+      if(dic!=nil)
+      {
     alertController = [UIAlertController  alertControllerWithTitle:@""  message:[dic valueForKey:@"message"]  preferredStyle:UIAlertControllerStyleAlert];
     [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        [self.navigationController popViewControllerAnimated:YES];
+       [self.navigationController popViewControllerAnimated:YES];
+        [alertController dismissViewControllerAnimated:YES completion:nil];
     }]];
     [self presentViewController:alertController animated:YES completion:nil];
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"forgotPassword"];
+      }
+    else
+    {
+        [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+//        alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Opps something went  wrong"  preferredStyle:UIAlertControllerStyleAlert];
+//        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+//             [self.navigationController popViewControllerAnimated:YES];
+//            [alertController dismissViewControllerAnimated:YES completion:nil];
+//        }]];
+//        [self presentViewController:alertController animated:YES completion:nil];
+        
+    }
 }
 
 @end

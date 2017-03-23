@@ -23,6 +23,7 @@
     int lastpage;
     NSUInteger myCount;
     NSDictionary *postdic;
+    BOOL acceptordeclined;
 }
 @end
 
@@ -30,6 +31,7 @@
 @synthesize tv;
 -(id)init
 {
+     user_id = [[NSUserDefaults standardUserDefaults]stringForKey:@"user_id"];
     pageNumber = 1;
     [self eventServercall];
     return self;
@@ -37,7 +39,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [SVProgressHUD show];
-    user_id = [[NSUserDefaults standardUserDefaults]stringForKey:@"user_id"];
+   
     response_text = [[NSString alloc]init];
     //    [[NSUserDefaults standardUserDefaults]stringForKey:@"user_id"];
     NSURLSessionConfiguration *sessionConfig=[NSURLSessionConfiguration ephemeralSessionConfiguration];
@@ -107,7 +109,7 @@
     }
             else {
                 
-                NSString *URL =[NSString stringWithFormat:@"http://facilitymanagementcouncil.com/admin/service/events/%d",pageNumber];
+                NSString *URL =[NSString stringWithFormat:@"http://facilitymanagementcouncil.com/admin/service/events/%d/%@",pageNumber,user_id];
                 NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:URL]];
                 
                 NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -168,24 +170,86 @@
 {
     selectedButtonTag = sender.tag;
     dic = [responseArray objectAtIndex:sender.tag];
+   //  response = 1;
+   
+    
     selected=!selected;
     [self.tv reloadData];
     
     
 }
+//postdic=[postdetailsarray objectAtIndex:Sectionpath];
+//NSInteger i=[[postdic valueForKey:@"likes_count"] integerValue];
+//NSMutableDictionary *update=[[NSMutableDictionary alloc]initWithDictionary:postdic];
+//[update setValue:@"1" forKey:@"already_liked"];
+//i++;
+//NSString *likes_count=[NSString stringWithFormat:@"%ld",i];
+//[update setValue:likes_count forKey:@"likes_count"];
+//[postdetailsarray replaceObjectAtIndex:Sectionpath withObject:update];
+////        [tableview beginUpdates];
+//dispatch_async(dispatch_get_main_queue(), ^{
+//    [tableview reloadSections:[[NSIndexSet alloc] initWithIndex:Sectionpath+1] withRowAnimation:UITableViewRowAnimationNone];
+//    
+//});
+
 -(void)acceptAction:(UIButton*)sender{
      acceptselected = sender.tag;
     dic = [responseArray objectAtIndex:sender.tag];
     event_d = [dic objectForKey:@"event_id"];
-    response_text = @"accept";
-    [self postservercall];
+     int i=[[dic valueForKey:@"response"] intValue];
+    if(i==0)
+    {
+        UIAlertController *alertController;
+        alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Are you sure you want to attend the event"  preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+            response_text = @"Accept";
+            [self postservercall];
+            NSMutableDictionary *update=[[NSMutableDictionary alloc]initWithDictionary:dic];
+            [update setValue:@"1" forKey:@"response"];
+            [responseArray replaceObjectAtIndex:sender.tag withObject:update];
+        }]];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+             [alertController dismissViewControllerAnimated:YES completion:nil];
+           
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
+    
+    }
+    else{
+        
+         [self.view makeToast:@"You Have already responded this event" duration:1.0 position:@"bottom"];
+    }
     
 }
 -(void)declinAction:(UIButton*)sender{
+     acceptselected = sender.tag;
+    dic = [responseArray objectAtIndex:sender.tag];
      event_d = [dic objectForKey:@"event_id"];
-     response_text = @"decline";
-    acceptselected = sender.tag;
+      int i=[[dic valueForKey:@"response"] intValue];
+    if(i==0)
+    {
+        UIAlertController *alertController;
+        alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Are you sure you want to attend the event"  preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+
+     response_text = @"Decline";
     [self postservercall];
+    NSMutableDictionary *update=[[NSMutableDictionary alloc]initWithDictionary:dic];
+    [update setValue:@"1" forKey:@"response"];
+    [responseArray replaceObjectAtIndex:sender.tag withObject:update];
+        }]];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+            
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
+    else
+    {
+         [self.view makeToast:@"You Have already responded this event" duration:1.0 position:@"bottom"];
+    }
 
 }
 //http://facilitymanagementcouncil.com/admin/service/eventresponse
@@ -254,10 +318,35 @@ didCompleteWithError:(nullable NSError *)error
 -(void)sucesstask
 {
    // NSLog(@"responseData%@",dict);
-    [tv reloadData];
+  //  [tv reloadData];
+    UIAlertController *alertController;
+    if(dict!=nil)
+    {
+        alertController = [UIAlertController  alertControllerWithTitle:@""  message:[dict valueForKey:@"message"]  preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            //  [self.navigationController popViewControllerAnimated:YES];
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
+    else
+    {
+        alertController = [UIAlertController  alertControllerWithTitle:@""  message:@"Opps something went  wrong"  preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            //  [self.navigationController popViewControllerAnimated:YES];
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
+        
+    }
   }
 
-
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [SVProgressHUD dismiss];
+    
+}
 
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section

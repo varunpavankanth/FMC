@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "Menu.h"
 #import <SVProgressHUD.h>
+#import "ChangePassword.h"
 @interface ViewController ()
 
 @end
@@ -32,7 +33,8 @@
     y=CGRectGetMaxY(img.frame);
     w=self.view.frame.size.width-x;
     h=self.view.frame.size.height/2.7;
-    loginbg =[[UIView alloc]initWithFrame:CGRectMake( 10, CGRectGetMaxY(img.frame)+20, w-10,h)];
+    self.navigationController.delegate=self;
+    loginbg =[[UIView alloc]initWithFrame:CGRectMake( 5, CGRectGetMaxY(img.frame)+20, w-10,230)];
     UIImageView *bgimage=[[UIImageView alloc]init];
     bgimage.frame=CGRectMake(0, 0, loginbg.frame.size.width, loginbg.frame.size.height);
     bgimage.image=[UIImage imageNamed:@"login_background.png"];
@@ -40,10 +42,14 @@
     [scrollView addSubview:loginbg];
     
     userid=[[ACFloatingTextField alloc]initWithFrame:CGRectMake(20, 10, CGRectGetWidth([UIScreen mainScreen].bounds)-40, 45)];
-    [userid setTextFieldPlaceholderText:@"Username"];
+    [userid setTextFieldPlaceholderText:@"Username(Personal email Id)"];
     userid.selectedLineColor = [UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
     userid.placeHolderColor = [UIColor grayColor];
     userid.selectedPlaceHolderColor = [UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
+//    userid.keyboardType=UIKeyboardTypeURL;
+//    userid.spellCheckingType=UITextSpellCheckingTypeNo;
+     userid.secureTextEntry = YES;
+    userid.secureTextEntry=NO;
     userid.lineColor =  [UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
     userid.delegate=self;
     UIImageView * nameimage= [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"login_icon.png"]];
@@ -71,7 +77,8 @@
     [password setRightView:hide];
     [loginbg addSubview:password];
     
-    forgetprass =[[UILabel alloc]initWithFrame:CGRectMake(50, CGRectGetMaxY(password.frame)+5, loginbg.frame.size.width-60,50)];
+    forgetprass =[[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(loginbg.frame)-160, CGRectGetMaxY(password.frame)+5, 150,40)];
+    //forgetprass.backgroundColor=[UIColor redColor];
     forgetprass.text=@"Forgot Password?";
     forgetprass.textAlignment=NSTextAlignmentRight;
     forgetprass.textColor=[UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
@@ -84,7 +91,7 @@
     [forgetprass addGestureRecognizer:tapAction1];
     [loginbg addSubview:forgetprass];
     
-    login =[[UIButton alloc]initWithFrame:CGRectMake(loginbg.frame.size.width/2-50, CGRectGetMaxY(forgetprass.frame)+10, 100, 30)];
+    login =[[UIButton alloc]initWithFrame:CGRectMake(loginbg.frame.size.width/2-50, CGRectGetMaxY(forgetprass.frame)+5, 100, 30)];
     [login addTarget:self action:@selector(servercall) forControlEvents:UIControlEventTouchDown];
     [login setTitle:@"Login" forState:UIControlStateNormal];
     [login setBackgroundColor:[UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0]];
@@ -136,12 +143,27 @@
 }
 -(void)servercall
 {
+    login.enabled=NO;
     Reachability *networkReachability = [Reachability reachabilityForInternetConnection];
     NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
     UIAlertController *alertController;
     if (networkStatus == NotReachable)
     {
+       // [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+       // [SVProgressHUD dismiss];
         [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+        UIAlertController *alertController;
+        alertController = [UIAlertController  alertControllerWithTitle:@"No internet"  message:@"This feature requires internet connection.please check your internet settings and try again"  preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+        }]];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"settings" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            //            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+            NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+            [[UIApplication sharedApplication] openURL:url];
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
+        login.enabled=YES;
     }
 else
 {
@@ -151,6 +173,7 @@ else
         alertController = [UIAlertController  alertControllerWithTitle:@"Error"  message:@"Please enter the User name"  preferredStyle:UIAlertControllerStyleAlert];
         [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             [alertController dismissViewControllerAnimated:YES completion:nil];
+            login.enabled=YES;
         }]];
         [self presentViewController:alertController animated:YES completion:nil];
     
@@ -159,11 +182,13 @@ else
         alertController = [UIAlertController  alertControllerWithTitle:@"Error"  message:@"Please enter the password"  preferredStyle:UIAlertControllerStyleAlert];
         [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             [alertController dismissViewControllerAnimated:YES completion:nil];
+            login.enabled=YES;
         }]];
         [self presentViewController:alertController animated:YES completion:nil];
         
     }
   else {
+     [SVProgressHUD show];
     NSString * mystring =[NSString stringWithFormat:@"username=%@&password=%@",userid.text,password.text];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:@"http://facilitymanagementcouncil.com/admin/service/login"]];
@@ -203,10 +228,12 @@ didCompleteWithError:(nullable NSError *)error
 -(void)sucesstask
 {
         if (!(dic==nil)) {
+            login.enabled=YES;
             NSString * storyboardIdentifier = @"Main";
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardIdentifier bundle: nil];
     
         if ([[dic valueForKey:@"status"]isEqualToString:@"error"]) {
+            [SVProgressHUD dismiss];
             UIAlertController *alertController;
             alertController = [UIAlertController  alertControllerWithTitle:@"Error"  message:[dic valueForKey:@"msg"]  preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
@@ -217,6 +244,7 @@ didCompleteWithError:(nullable NSError *)error
     
     else
     {
+         [SVProgressHUD dismiss];
         [[NSUserDefaults standardUserDefaults] setObject:[dic valueForKey:@"alternate_contact_number"] forKey:@"alternate_contact_number"];
         [[NSUserDefaults standardUserDefaults] setObject:[dic valueForKey:@"business_email_id"] forKey:@"business_email_id"];
         [[NSUserDefaults standardUserDefaults] setObject:[dic valueForKey:@"company_name"] forKey:@"company_name"];
@@ -236,19 +264,36 @@ didCompleteWithError:(nullable NSError *)error
         NSString *savedValue = [[NSUserDefaults standardUserDefaults]
                                 stringForKey:@"status"];
         NSLog(@"%@",savedValue);
+        BOOL fg=[[NSUserDefaults standardUserDefaults]boolForKey:@"forgotPassword"];
+        if(fg==YES)
+        {
+            ChangePassword *cv=[[ChangePassword alloc]init];
+            [self presentViewController:cv animated:YES completion:nil];
+           //[self.navigationController pushViewController:cv animated:YES];
+        }
+        else
+        {
         hm =[storyboard instantiateViewControllerWithIdentifier:@"Home"];
         mn=[[Menu alloc]init];
         UINavigationController *home=[[UINavigationController alloc]initWithRootViewController:hm];
         UINavigationController *menu=[[UINavigationController alloc]initWithRootViewController:mn];
        SWRevealViewController *revealController = [[SWRevealViewController alloc] initWithRearViewController:menu frontViewController:home];
         [self presentViewController:revealController animated:YES completion:nil];
+        }
     }
         }
     else
     {
-        NSLog(@"dic is nill");
-        dic=con.dic;
-        [self sucesstask];
+         login.enabled=YES;
+         [SVProgressHUD dismiss];
+        [self.view makeToast:@"Please check network" duration:1.0 position:@"center"];
+
+//        UIAlertController *alertController;
+//        alertController = [UIAlertController  alertControllerWithTitle:@"Error"  message:@"!Opps something went  wrong"  preferredStyle:UIAlertControllerStyleAlert];
+//        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+//            [alertController dismissViewControllerAnimated:YES completion:nil];
+//        }]];
+//        [self presentViewController:alertController animated:YES completion:nil];
     }
     
 

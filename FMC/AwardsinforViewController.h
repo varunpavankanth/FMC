@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AwardsinforViewController : UIViewController<UITableViewDelegate,UITableViewDataSource>
+@interface AwardsinforViewController : UIViewController<UITableViewDelegate,UITableViewDataSource,UIWebViewDelegate>
 {
     UITableViewCell * cell1;
 }

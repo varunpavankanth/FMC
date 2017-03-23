@@ -1,17 +1,24 @@
 PODS:
+  - Crashlytics (3.8.4):
+    - Fabric (~> 1.6.3)
+  - Fabric (1.6.11)
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
   - SVProgressHUD (2.1.2)
 
 DEPENDENCIES:
+  - Crashlytics
+  - Fabric
   - SDWebImage (~> 3.7)
   - SVProgressHUD
 
 SPEC CHECKSUMS:
+  Crashlytics: 79e236942ca1e7fc641df1feb9a275360a78ab6a
+  Fabric: 5911403591946b8228ab1c51d98f1d7137e863c6
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SVProgressHUD: c404a55d78acbeb7ebb78b76d3faf986475a6994
 
-PODFILE CHECKSUM: 1adb18c0d617f873a637d24ec9efe8fca57cc1d4
+PODFILE CHECKSUM: 5344795799ed1684d67e508aa2dd6ce569a34de0
 
 COCOAPODS: 1.2.0

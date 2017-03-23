@@ -18,6 +18,7 @@
     NSDictionary* dic;
     NSError *error1;
     UIScrollView * scrollView;
+    float y,h;
 }
 @property (nonatomic, strong) NSURLSession *urlSession;
 @end

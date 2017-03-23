@@ -7,8 +7,12 @@
 //
 
 #import "Forgotpassword.h"
-
+#import "SVProgressHUD.h"
 @interface Forgotpassword ()
+{
+    UIView *view ;
+    CGPoint scroloffset;
+}
 
 @end
 
@@ -20,6 +24,7 @@
     self.urlSession= [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:nil];
     scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0,0,self.view.frame.size.width,self.view.frame.size.height )];
     [scrollView setScrollEnabled:NO];
+    scrollView.contentOffset=scroloffset;
     [self.view addSubview:scrollView];
     self.view.backgroundColor=[UIColor whiteColor];
     self.navigationController.navigationBar.barTintColor=[UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
@@ -31,16 +36,16 @@
     
     
     UIImageView *img=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"fmc_logo.png"]];
-    img.frame=CGRectMake(self.view.frame.size.width/2-100, 75, 200, 165);
+    img.frame=CGRectMake(self.view.frame.size.width/2-100, self.view.frame.size.height/13.33, 200, 165);
     [scrollView addSubview:img];
     
-    UIView *view =[[UIView alloc]initWithFrame:CGRectMake(10, CGRectGetMaxY(img.frame)+20, self.view.frame.size.width-20,165)];
+    view =[[UIView alloc]initWithFrame:CGRectMake(10, CGRectGetMaxY(img.frame)+20, self.view.frame.size.width-20,165)];
     
     UIImageView *logbac=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Homeback.png"]];
-    logbac.frame=CGRectMake(0, 0, CGRectGetMaxX(view.frame),165);
+    logbac.frame=CGRectMake(0, 0, CGRectGetMaxX(view.frame)-10,165);
     [view addSubview:logbac];
     userid=[[ACFloatingTextField alloc]initWithFrame:CGRectMake(10,30, logbac.frame.size.width-20, 50)];
-    [userid setTextFieldPlaceholderText:@"UserName"];
+    [userid setTextFieldPlaceholderText:@"Username(Personal email Id)"];
     
     userid.selectedLineColor = [UIColor colorWithRed:0.12 green:0.16 blue:0.41 alpha:1.0];
     userid.placeHolderColor = [UIColor grayColor];
@@ -61,15 +66,67 @@
     [view addSubview:getpassword];
 
     [scrollView addSubview:view];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(keyboardOnScreen:) name:UIKeyboardWillShowNotification object:nil];
     // Do any additional setup after loading the view.
 }
+-(void)keyboardOnScreen:(NSNotification *)notification
+{
+    y=0;
+    h=0;
+    NSDictionary *info  = notification.userInfo;
+    NSValue      *value = info[UIKeyboardFrameEndUserInfoKey];
+    // CGRect frame        = textField.frame;
+    CGRect rawFrame      = [value CGRectValue];
+    CGRect keyboardFrame = [self.view convertRect:rawFrame fromView:nil];
+    y=keyboardFrame.origin.y;
+    h=keyboardFrame.size.height;
+    
+    
+    NSLog(@"keyboardFrame: %@", NSStringFromCGRect(keyboardFrame));
+}
+
+-(void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    float ty=view.frame.origin.y+30;
+    float th=textField.frame.size.height;
+    if(y==0)
+        y=375;
+    if (ty+50<=y)
+    {
+        [scrollView setContentOffset:CGPointMake(0,(ty-y)+2*th+20) animated:NO];
+    }
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [userid resignFirstResponder];
+    [scrollView setContentOffset:CGPointMake(0, -49) animated:NO];
+    return YES;
+}
+
+
 -(void)servercall{
+    [SVProgressHUD show];
     Reachability *networkReachability = [Reachability reachabilityForInternetConnection];
     NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
     UIAlertController *alertController;
     if (networkStatus == NotReachable)
     {
+//[self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+        [SVProgressHUD dismiss];
         [self.view makeToast:@"No internet connection" duration:1.0 position:@"center"];
+        UIAlertController *alertController;
+        alertController = [UIAlertController  alertControllerWithTitle:@"No internet"  message:@"This feature requires internet connection.please check your internet settings and try again"  preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+        }]];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"settings" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            //            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+            NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+            [[UIApplication sharedApplication] openURL:url];
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
     }
     else
     {
@@ -127,12 +184,28 @@ didCompleteWithError:(nullable NSError *)error
 -(void)sucesstask
 {
     if (!(dic==nil)) {
-         [self.view makeToast:[dic valueForKey:@"msg"]  duration:1.0 position:@"bottom"];
-        [NSTimer scheduledTimerWithTimeInterval:1.0f
-                                         target:self
-                                       selector:@selector(dissmiss)
-                                       userInfo:nil
-                                        repeats:YES];
+         [SVProgressHUD dismiss];
+//         [self.view makeToast:[dic valueForKey:@"msg"]  duration:1.0 position:@"bottom"];
+//        [NSTimer scheduledTimerWithTimeInterval:1.0f
+//                                         target:self
+//                                       selector:@selector(dissmiss)
+//                                       userInfo:nil
+//                                        repeats:YES];
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"forgotPassword"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        UIAlertController *alertController;
+        alertController = [UIAlertController  alertControllerWithTitle:@""  message:[dic valueForKey:@"msg"]  preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
+
+    }
+    else
+    {
+         [SVProgressHUD dismiss];
+        [self.view makeToast:@"Please check network" duration:1.0 position:@"center"];
     }
     
 }
@@ -149,14 +222,6 @@ didCompleteWithError:(nullable NSError *)error
 {
     [self  dismissViewControllerAnimated:YES completion:nil];
     
-}
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    [userid resignFirstResponder];
-    
-    
-    
-    return YES;
 }
 
 
